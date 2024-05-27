@@ -23,4 +23,8 @@ class DatabaseRepository {
         .doc(userId)
         .update(updatedData);
   }
+
+  Future<void> deleteUser(String userId) {
+    return _firebaseFirestore.collection('users').doc(userId).delete();
+  }
 }

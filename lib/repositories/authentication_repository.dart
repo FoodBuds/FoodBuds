@@ -1,3 +1,5 @@
+import "dart:ffi";
+
 import "package:firebase_auth/firebase_auth.dart";
 
 class AuthenticationRepository {
@@ -34,5 +36,15 @@ class AuthenticationRepository {
   Future<String?> getUserId() async {
     User? user = _firebaseAuth.currentUser;
     return user?.uid;
+  }
+
+  Future<void> deleteUser() async {
+    User? user = _firebaseAuth.currentUser;
+    if (user != null) {
+      await user.delete();
+      print('User deleted successfully');
+    } else {
+      print('No user is currently signed in');
+    }
   }
 }

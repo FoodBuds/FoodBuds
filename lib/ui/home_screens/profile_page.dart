@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
 import 'dart:io';
 import 'package:foodbuds0_1/repositories/repositories.dart';
@@ -59,6 +60,30 @@ class _ProfilePageState extends State<ProfilePage> {
           showMe = user.genderPreference.toString().split('.').last;
           preferredLanguage = user.diet.toString().split('.').last;
         });
+      }
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> deleteUser() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String? userId = await _authRepo.getUserId();
+      if (userId != null) {
+        await _databaseRepo.deleteUser(userId);
+        await _authRepo.deleteUser();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => FirstScreen()),
+        );
       }
     } catch (e) {
       print(e);
@@ -462,9 +487,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   const Divider(thickness: 1),
                   ElevatedButton(
                     onPressed: () {
-                      SystemChannels.platform
-                          .invokeMethod('SystemNavigator.pop');
-                      exit(0);
+                      AuthenticationRepository().signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FirstScreen()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -473,11 +501,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                   const SizedBox(height: 8), // Added space between buttons
                   ElevatedButton(
-                    onPressed: () {
-                      SystemChannels.platform
-                          .invokeMethod('SystemNavigator.pop');
-                      exit(0);
-                    },
+                    onPressed: () async => deleteUser(),
                     style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         foregroundColor: Colors.white),

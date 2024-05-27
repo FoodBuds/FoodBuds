@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "932572359552",
+    "project_id": "food-buds-back-end-201",
+    "storage_bucket": "food-buds-back-end-201.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932572359552:android:1df442fc77bd820c28af65",
+        "android_client_info": {
+          "package_name": "com.example.foodbuds0_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4uRHeg5sDumAQgHE3pKQ6o6FndgFDsPU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

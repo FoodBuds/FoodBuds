@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
 import 'dart:io';
 import 'package:foodbuds0_1/repositories/repositories.dart';
@@ -206,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => NextPage()),
+          MaterialPageRoute(builder: (context) => ChatPage()),
         );
         break;
       case 2:

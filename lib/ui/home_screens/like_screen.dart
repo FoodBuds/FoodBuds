@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
 
 import 'home_screens.dart';
@@ -37,7 +38,7 @@ class _LikePageState extends State<LikePage> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => NextPage()),
+          MaterialPageRoute(builder: (context) => ChatPage()),
         );
         break;
       case 2:

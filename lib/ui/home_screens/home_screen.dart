@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 
 import 'home_screens.dart';
 
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const NextPage()),
+          MaterialPageRoute(builder: (context) => const ChatPage()),
         );
         break;
       case 2:

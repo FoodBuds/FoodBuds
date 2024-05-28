@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'home_screens.dart';
 
 class MatchPage extends StatelessWidget {
@@ -51,20 +52,22 @@ class MatchPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage(
-                        'assets/user1.jpg'), // Replace with actual image paths
+                    backgroundImage: AssetImage('assets/user1.jpg'), // Replace with actual image paths
                   ),
                   SizedBox(width: 20),
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage(
-                        'assets/user2.jpg'), // Replace with actual image paths
+                    backgroundImage: AssetImage('assets/user2.jpg'), // Replace with actual image paths
                   ),
                 ],
               ),
               SizedBox(height: 40),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChatPage(),
+                  ));
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.amber,

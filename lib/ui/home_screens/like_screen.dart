@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
-import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
-
-import 'home_screens.dart';
 
 class LikePage extends StatefulWidget {
   const LikePage({super.key});
@@ -25,35 +21,6 @@ class _LikePageState extends State<LikePage> {
     setState(() {
       _selectedSubscriptionIndex = index;
     });
-  }
-
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-        break;
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ChatPage()),
-        );
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => LikePage()), // current page
-        );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-        break;
-    }
   }
 
   @override
@@ -111,20 +78,16 @@ class _LikePageState extends State<LikePage> {
                         children: [
                           const Text(
                             'Get FoodbuD+',
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold),
+                            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                              'Unlimited Super Likes\nSend as many super likes as you want'),
+                          const Text('Unlimited Super Likes\nSend as many super likes as you want'),
                           const SizedBox(height: 16),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildSubscriptionOption(
-                                  0, '12 months', '\$7/mo'),
-                              _buildSubscriptionOption(
-                                  1, '6 months', '\$10/mo'),
+                              _buildSubscriptionOption(0, '12 months', '\$7/mo'),
+                              _buildSubscriptionOption(1, '6 months', '\$10/mo'),
                               _buildSubscriptionOption(2, '1 month', '\$19/mo'),
                             ],
                           ),
@@ -147,32 +110,7 @@ class _LikePageState extends State<LikePage> {
             ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Likes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: 2, // Assuming Likes is the current page
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-      ),
+
     );
   }
 
@@ -184,23 +122,15 @@ class _LikePageState extends State<LikePage> {
           Text(
             duration,
             style: TextStyle(
-              color: _selectedSubscriptionIndex == index
-                  ? Colors.blue
-                  : Colors.black,
-              fontWeight: _selectedSubscriptionIndex == index
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+              color: _selectedSubscriptionIndex == index ? Colors.blue : Colors.white,
+              fontWeight: _selectedSubscriptionIndex == index ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Text(
             price,
             style: TextStyle(
-              color: _selectedSubscriptionIndex == index
-                  ? Colors.blue
-                  : Colors.black,
-              fontWeight: _selectedSubscriptionIndex == index
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+              color: _selectedSubscriptionIndex == index ? Colors.blue : Colors.white,
+              fontWeight: _selectedSubscriptionIndex == index ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/chat_screen/date_menu_screen.dart';
+import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
 
 class LocationSelectionPage extends StatefulWidget {
   const LocationSelectionPage({super.key});
@@ -19,36 +19,39 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: Icon(Icons.bookmark_border, color: Colors.black),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    builder: (context) => SavedLocationsWidget(
-                      onSelect: (name, hours) {
-                        setState(() {
-                          currentLocationName = name;
-                          currentLocationHours = hours;
-                        });
-                      },
-                    ),
-                    backgroundColor: Colors.white,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                    ),
-                  );
-                },
-              ),
-            ),
-            Text(
-              'Select a location',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            SizedBox(height: 40), // Add this SizedBox to create space from the top
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select a location',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.bookmark_border, color: Colors.black),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => SavedLocationsWidget(
+                        onSelect: (name, hours) {
+                          setState(() {
+                            currentLocationName = name;
+                            currentLocationHours = hours;
+                          });
+                        },
+                      ),
+                      backgroundColor: Colors.white,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
             SizedBox(height: 20),
             ClipOval(
@@ -118,7 +121,7 @@ class _LocationSelectionPageState extends State<LocationSelectionPage> {
               child: Text('Ask for a date'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Colors.amber,
+                foregroundColor: Colors.black,
                 textStyle: TextStyle(
                   fontSize: 16,
                 ),
@@ -161,43 +164,59 @@ class SavedLocationsWidget extends StatelessWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
           ),
           SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: locations.length,
-              itemBuilder: (context, index) {
-                var location = locations[index];
-                return ListTile(
-                  leading: ClipRRect(
-                    borderRadius: BorderRadius.circular(8.0),
-                    child: Image.asset(
-                      location['image'] ?? 'assets/default.jpg',
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: locations.length,
+            itemBuilder: (context, index) {
+              var location = locations[index];
+              return Column(
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            location['image'] ?? 'assets/default.jpg',
+                            width: double.infinity,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          location['name'] ?? 'Unknown',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, color: Colors.green),
+                            SizedBox(width: 5),
+                            Text(
+                              location['hours'] ?? 'No hours available',
+                              style: TextStyle(color: Colors.amber),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
+                    trailing: Icon(Icons.arrow_forward, color: Colors.black),
+                    onTap: () {
+                      onSelect(location['name']!, location['hours']!);
+                      Navigator.of(context).pop();
+                    },
                   ),
-                  title: Text(
-                    location['name'] ?? 'Unknown',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  subtitle: Row(
-                    children: [
-                      Icon(Icons.access_time, color: Colors.green),
-                      SizedBox(width: 5),
-                      Text(
-                        location['hours'] ?? 'No hours available',
-                        style: TextStyle(color: Colors.amber),
-                      ),
-                    ],
-                  ),
-                  trailing: Icon(Icons.arrow_forward, color: Colors.black),
-                  onTap: () {
-                    onSelect(location['name']!, location['hours']!);
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-            ),
+                  Divider(color: Colors.black),
+                ],
+              );
+            },
           ),
         ],
       ),

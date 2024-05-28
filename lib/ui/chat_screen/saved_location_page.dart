@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'date_menu_screen.dart';
+import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
 
 class SavedLocationsPage extends StatelessWidget {
   const SavedLocationsPage({super.key});
@@ -102,31 +101,42 @@ class SavedLocationsPage extends StatelessWidget {
     ];
 
     return locations.map((location) {
-      return ListTile(
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: Image.asset(
-            location['image']!,
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-          ),
-        ),
-        title: Text(
-          location['name']!,
-          style: TextStyle(color: Colors.black),
-        ),
-        subtitle: Row(
-          children: [
-            Icon(Icons.access_time, color: Colors.green),
-            SizedBox(width: 5),
-            Text(
-              location['hours']!,
-              style: TextStyle(color: Colors.amber),
+      return Column(
+        children: [
+          ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                location['image']!,
+                width: 60,
+                height: 60,
+                fit: BoxFit.cover,
+              ),
             ),
-          ],
-        ),
-        trailing: Icon(Icons.arrow_forward, color: Colors.black),
+            title: Text(
+              location['name']!,
+              style: TextStyle(color: Colors.black),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 5),
+                Row(
+                  children: [
+                    Icon(Icons.access_time, color: Colors.green),
+                    SizedBox(width: 5),
+                    Text(
+                      location['hours']!,
+                      style: TextStyle(color: Colors.amber),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            trailing: Icon(Icons.arrow_forward, color: Colors.black),
+          ),
+          Divider(color: Colors.black),
+        ],
       );
     }).toList();
   }

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
-
 import 'home_screens.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -12,10 +10,75 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  final PageController _pageController = PageController();
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.jumpToPage(index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: const <Widget>[
+          HomeScreenContent(),
+          ChatPage(),
+          LikePage(),
+          ProfilePage(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Likes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
+      ),
+    );
+  }
+}
+
+class HomeScreenContent extends StatefulWidget {
+  const HomeScreenContent({super.key});
+
+  @override
+  State<HomeScreenContent> createState() => _HomeScreenContentState();
+}
+
+class _HomeScreenContentState extends State<HomeScreenContent> {
   double _distance = 5.0;
   String _gender = 'Male';
   RangeValues _ageRange = const RangeValues(22, 34);
-  int _selectedIndex = 0;
   int _userIndex = 0;
 
   final List<Map<String, String>> _users = [
@@ -24,34 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // Add more users here
   ];
 
-  void _onItemTapped(int index) {
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-        break;
-      case 1:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ChatPage()),
-        );
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const LikePage()),
-        );
-        break;
-      case 3:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProfilePage()),
-        );
-        break;
-    }
-  }
+  final PageController _pageController = PageController();
 
   void _showFilterDialog() {
     showDialog(
@@ -78,35 +114,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                   const Text('Gender'),
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
-                        child: ListTile(
-                          title: const Text('Male'),
-                          leading: Radio(
-                            value: 'Male',
-                            groupValue: _gender,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _gender = value!;
-                              });
-                            },
-                          ),
-                        ),
+                      RadioListTile<String>(
+                        title: const Text('Male'),
+                        value: 'Male',
+                        groupValue: _gender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _gender = value!;
+                          });
+                        },
                       ),
-                      Expanded(
-                        child: ListTile(
-                          title: const Text('Female'),
-                          leading: Radio(
-                            value: 'Female',
-                            groupValue: _gender,
-                            onChanged: (String? value) {
-                              setState(() {
-                                _gender = value!;
-                              });
-                            },
-                          ),
-                        ),
+                      RadioListTile<String>(
+                        title: const Text('Female'),
+                        value: 'Female',
+                        groupValue: _gender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _gender = value!;
+                          });
+                        },
                       ),
                     ],
                   ),
@@ -180,12 +208,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _changeUser() {
-    setState(() {
-      _userIndex = (_userIndex + 1) % _users.length;
-    });
-  }
-
   void _showSuperLikeMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -193,6 +215,26 @@ class _HomeScreenState extends State<HomeScreen> {
         duration: Duration(seconds: 1),
       ),
     );
+  }
+
+  void _swipeLeft() {
+    setState(() {
+      _userIndex = (_userIndex + 1) % _users.length;
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    });
+  }
+
+  void _swipeRight() {
+    setState(() {
+      _userIndex = (_userIndex + 1) % _users.length;
+      _pageController.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
+    });
   }
 
   @override
@@ -215,42 +257,65 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Container(
-        color: Colors.amber,
-        child: Center(
-          child: SingleChildScrollView(
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return Container(
+            color: Colors.amber,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image.asset(
-                  _users[_userIndex]['image']!, // User profile image
-                  fit: BoxFit.cover,
-                ),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.only(top: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        _users[_userIndex]['name']!,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _users[_userIndex]['distance']!,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
+                Expanded(
+
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: _users.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _userIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          SizedBox(height: 20), // Add some space above the image
+                          Image.asset(
+                            _users[index]['image']!, // User profile image
+                            fit: BoxFit.cover,
+                            width: constraints.maxWidth * 0.9,
+                            height: constraints.maxHeight * 0.5,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            margin: const EdgeInsets.only(top: 20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  _users[index]['name']!,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  _users[index]['distance']!,
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+
                   ),
                 ),
                 Padding(
@@ -259,15 +324,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       CircleAvatar(
-                        radius: 30,
+                        radius: constraints.maxWidth * 0.08,
                         backgroundColor: Colors.red,
                         child: IconButton(
                           icon: const Icon(Icons.clear, color: Colors.white),
-                          onPressed: _changeUser,
+                          onPressed: _swipeRight,
                         ),
                       ),
                       CircleAvatar(
-                        radius: 30,
+                        radius: constraints.maxWidth * 0.08,
                         backgroundColor: Colors.blue,
                         child: IconButton(
                           icon: const Icon(Icons.favorite, color: Colors.white),
@@ -275,11 +340,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       CircleAvatar(
-                        radius: 30,
+                        radius: constraints.maxWidth * 0.08,
                         backgroundColor: Colors.green,
                         child: IconButton(
                           icon: const Icon(Icons.check, color: Colors.white),
-                          onPressed: _changeUser,
+                          onPressed: _swipeLeft,
                         ),
                       ),
                     ],
@@ -287,34 +352,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Likes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
+          );
+        },
       ),
     );
   }

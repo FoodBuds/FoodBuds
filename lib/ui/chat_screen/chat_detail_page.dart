@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/chat_screen/date_location_page.dart';
-
+import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
 
 class ChatDetailPage extends StatelessWidget {
   final String name;

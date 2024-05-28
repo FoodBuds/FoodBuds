@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
-import 'home_screens.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:foodbuds0_1/models/models.dart' as model;
 

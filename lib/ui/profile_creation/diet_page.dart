@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/ui/profile_creation/kitchen_page.dart';
 import 'show_me_gender.dart';
 
 class DietPage extends StatefulWidget {
   final Map<String, dynamic> data;
 
-  const DietPage({Key? key, required this.data}) : super(key: key);
+  const DietPage({super.key, required this.data});
 
   @override
   _DietDocState createState() => _DietDocState();
@@ -32,9 +33,11 @@ class _DietDocState extends State<DietPage> {
     return Scaffold(
       backgroundColor: Colors.amber,
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('What do you eat?',
             style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.amber,
+        toolbarHeight: 100.0,
       ),
       body: ListView(
         children: _dietIcons.keys.map((String key) {
@@ -56,7 +59,7 @@ class _DietDocState extends State<DietPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ShowMeGenderPage(
+            builder: (context) => KitchenPage(
               data: {
                 ...widget.data,
                 'diet': _selectedDiet,

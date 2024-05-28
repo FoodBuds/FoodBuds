@@ -1,8 +1,7 @@
-import "package:foodbuds0_1/repositories/repositories.dart";
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
-import "package:firebase_auth/firebase_auth.dart";
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -14,11 +13,34 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   String? errorMessage = " ";
 
+  bool isPasswordCompliant(String password, [int minLength = 8]) {
+      if (password.isEmpty) return false;
+      bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+      bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+      bool hasDigits = password.contains(RegExp(r'[0-9]'));
+      // Genişletilmiş özel karakterler listesi
+      bool hasSpecialCharacters = password.contains(RegExp(r'[!@#$%^&*()_+{}|:"<>?,./;\\\[\]`~=]'));
+      return password.length >= minLength && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
+  }
+
   Future<void> createUserWithEmailAndPassword() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      setState(() {
+        errorMessage = "Passwords do not match.";
+      });
+      return;
+    }
+
+    if (!isPasswordCompliant(_passwordController.text)) {
+      setState(() {
+        errorMessage = "Password must be at least 8 characters long and include uppercase, lowercase letters, numbers, and special characters.";
+      });
+      return;
+    }
+
     try {
       await AuthenticationRepository().createUserWithEmailandPassword(
         email: _emailController.text,
@@ -101,7 +123,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               SizedBox(height: 10),
               Text(
-                errorMessage == "" ? "" : "$errorMessage",
+                errorMessage == " " ? " " : "$errorMessage",
                 style: TextStyle(color: Colors.red),
               ),
               SizedBox(height: 30),

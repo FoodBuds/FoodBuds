@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import "package:firebase_core/firebase_core.dart";
 import "package:foodbuds0_1/firebase_options.dart";
+import "package:foodbuds0_1/ui/home_screens/home_screen.dart";
 import "package:get/get.dart";
 import "ui/authentication_screen/authentication_screen.dart";
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.amber,
       ),
       debugShowCheckedModeBanner: false,
-      home: FirstScreen(),
+      home: HomeScreen(),
     );
   }
 }

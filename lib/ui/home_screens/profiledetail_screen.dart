@@ -12,68 +12,61 @@ class ProfileDetail extends StatelessWidget {
         title: Text('${user['name']} ${user['surname']}'),
         backgroundColor: Colors.amber,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            CircleAvatar(
-              radius: 50, // Profile image outside the box
-              backgroundImage: AssetImage(user['image']!),
-            ),
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
-                  ),
-                ],
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6, // Profile image covers most of the screen
+              width: double.infinity,
+              child: Image.asset(
+                user['image']!,
+                fit: BoxFit.cover,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Center(
-                    child: Text(
-                      '${user['name']} ${user['surname']}',
-                      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Container(
+                padding: const EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      spreadRadius: 3,
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildBlurredInfoContainer(
-                    'Gender: ${user['gender']}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'Distance: ${user['distance']}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'City: ${user['city']}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'Bio: ${user['bio'] ?? 'No bio available'}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'Diet: ${user['diet'] ?? 'No diet preference'}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'Gender Preference: ${user['genderPreference'] ?? 'No gender preference'}',
-                  ),
-                  const SizedBox(height: 10),
-                  _buildBlurredInfoContainer(
-                    'Favorite Cuisines: ${(user['cuisine'] ?? 'No favorite cuisines').split(',').join(', ')}',
-                  ),
-                ],
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        '${user['name']} ${user['surname']}',
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildInfoText('Gender: ${user['gender']}'),
+                    const Divider(),
+                    _buildInfoText('City: ${user['city']}'),
+                    const Divider(),
+                    _buildInfoText('Bio: ${user['bio'] ?? 'No bio available'}'),
+                    const Divider(),
+                    _buildInfoText('Diet: ${user['diet'] ?? 'No diet preference'}'),
+                    const Divider(),
+                    _buildInfoText('Gender Preference: ${user['genderPreference'] ?? 'No gender preference'}'),
+                    const Divider(),
+                    _buildInfoText('Favorite Cuisines: ${(user['cuisine'] ?? 'No favorite cuisines').split(',').join(', ')}'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -82,25 +75,15 @@ class ProfileDetail extends StatelessWidget {
     );
   }
 
-  Widget _buildBlurredInfoContainer(String text) {
-    return Container(
-      padding: const EdgeInsets.all(15),
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 3,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
+  Widget _buildInfoText(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 16, color: Colors.black),
+        style: const TextStyle(
+          fontSize: 18,
+          color: Color.fromRGBO(0, 1, 39, 1),
+        ),
       ),
     );
   }

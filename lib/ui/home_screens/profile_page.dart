@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:foodbuds0_1/models/models.dart' as model;
 
 class ProfilePage extends StatefulWidget {
@@ -17,7 +16,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late AuthenticationRepository _authRepo;
   late DatabaseRepository _databaseRepo;
-  auth.User? _currentUser;
   bool _isLoading = true;
 
   String name = '';

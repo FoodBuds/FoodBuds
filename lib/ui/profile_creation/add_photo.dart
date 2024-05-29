@@ -27,9 +27,6 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
 
   Future<void> downloadPhoto() async {
     try {
-      print("*********************************");
-      print("photo");
-      print(widget.data);
       String filePath =
           await DatabaseRepository().uploadFile(_image as File) as String;
       Navigator.of(context).push(MaterialPageRoute(

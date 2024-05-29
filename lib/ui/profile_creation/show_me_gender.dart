@@ -47,9 +47,6 @@ class _ShowMeGenderPageState extends State<ShowMeGenderPage> {
   Widget genderButton(BuildContext context, String label) {
     return ElevatedButton(
       onPressed: () {
-        print("*********************************");
-        print("gender_page");
-        print(widget.data);
         _handleGenderSelection(label);
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => LocationPage(

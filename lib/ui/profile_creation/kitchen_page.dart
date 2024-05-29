@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/profile_creation/diet_page.dart';
 import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
 
 class KitchenPage extends StatefulWidget {
@@ -68,8 +67,6 @@ class _KitchenState extends State<KitchenPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          print("*********************************");
-          print("kitchen_page");
           print(widget.data);
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ShowMeGenderPage(

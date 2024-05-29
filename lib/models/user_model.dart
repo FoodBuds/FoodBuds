@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:foodbuds0_1/models/models.dart';
-import 'package:intl/intl.dart';
 
 class User extends Equatable {
   final String? id;
   final String name;
   final String surname;
-
   final String gender;
   final String bio;
   final Diet diet;
   final GenderPreference genderPreference;
+  final String? filePath;
+  final List<String> cuisine;
 
   const User({
     this.id,
@@ -21,6 +21,8 @@ class User extends Equatable {
     required this.bio,
     required this.diet,
     required this.genderPreference,
+    this.filePath,
+    required this.cuisine,
   });
 
   @override
@@ -32,22 +34,25 @@ class User extends Equatable {
         bio,
         diet,
         genderPreference,
+        filePath,
+        cuisine,
       ];
 
   static User fromSnapshot2(DocumentSnapshot snap) {
     User user = User(
-      id: snap.id,
-      name: snap['name'],
-      surname: snap['surname'],
-      gender: snap['gender'],
-      bio: snap['bio'],
-      diet: Diet.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['diet'].toString().toLowerCase()),
-      genderPreference: GenderPreference.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['genderPreference'].toString().toLowerCase()),
-    );
+        id: snap.id,
+        name: snap['name'],
+        surname: snap['surname'],
+        gender: snap['gender'],
+        bio: snap['bio'],
+        diet: Diet.values.firstWhere((e) =>
+            e.toString().split('.').last.toLowerCase() ==
+            snap['diet'].toString().toLowerCase()),
+        genderPreference: GenderPreference.values.firstWhere((e) =>
+            e.toString().split('.').last.toLowerCase() ==
+            snap['genderPreference'].toString().toLowerCase()),
+        filePath: snap['filePath'],
+        cuisine: snap['cuisine']);
     return user;
   }
 
@@ -60,6 +65,8 @@ class User extends Equatable {
       'bio': bio,
       'diet': diet.toString().split('.').last,
       'genderPreference': genderPreference.toString().split('.').last,
+      'filePath': filePath,
+      'cuisine': cuisine,
     };
   }
 
@@ -71,6 +78,8 @@ class User extends Equatable {
     String? bio,
     Diet? diet,
     GenderPreference? genderPreference,
+    String? filePath,
+    List<String>? cuisine,
   }) {
     return User(
       id: id ?? this.id,
@@ -80,6 +89,8 @@ class User extends Equatable {
       bio: bio ?? this.bio,
       diet: diet ?? this.diet,
       genderPreference: genderPreference ?? this.genderPreference,
+      filePath: filePath ?? this.filePath,
+      cuisine: cuisine ?? this.cuisine,
     );
   }
 
@@ -96,6 +107,8 @@ class User extends Equatable {
       genderPreference: GenderPreference.values.firstWhere((e) =>
           e.toString().split('.').last.toLowerCase() ==
           map['show_me_gender'].toString().toLowerCase()),
+      filePath: map['filePath'],
+      cuisine: List<String>.from(map['cuisine']),
     );
   }
 
@@ -112,6 +125,8 @@ class User extends Equatable {
       genderPreference: GenderPreference.values.firstWhere((e) =>
           e.toString().split('.').last.toLowerCase() ==
           snap['genderPreference'].toString().toLowerCase()),
+      filePath: snap['filePath'],
+      cuisine: List<String>.from(snap['cuisine']),
     );
   }
 }

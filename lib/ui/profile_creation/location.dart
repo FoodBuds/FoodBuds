@@ -11,8 +11,13 @@ class LocationPage extends StatelessWidget {
   void sendDataToBackend() {
     // Backend'e gönderme işlemini burada gerçekleştirin.
     // Örneğin, HTTP POST isteği yapabilirsiniz.
+    print("*********************************");
+    print("location");
+    print(data);
     print('Data to be sent to backend: ${User.fromMap(data)}');
     try {
+      print("****************************************");
+      print(data);
       DatabaseRepository().createUser(User.fromMap(data));
     } catch (error) {
       print(error);

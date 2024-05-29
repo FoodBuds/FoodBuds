@@ -12,7 +12,7 @@ class AlertPage extends StatelessWidget {
         onTap: () {
           // Navigate to another page when tapped anywhere on the screen
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => ProfilePage(),
+            builder: (context) => HomeScreen(),
           ));
         },
         child: Center(

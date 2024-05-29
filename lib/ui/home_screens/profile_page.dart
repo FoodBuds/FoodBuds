@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -23,6 +25,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String currentPlan = 'Free';
   String showMe = 'Men';
   String preferredLanguage = 'English';
+  String filePath = "";
   bool isEditing = false;
   bool isEditingPlan = false;
   double ageRangeStart = 22;
@@ -30,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   double maxDistance = 100;
   int _selectedSubscriptionIndex = -1;
 
+  File? _profileImage;
   final _emailController = TextEditingController();
 
   @override
@@ -55,6 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _emailController.text = email;
           showMe = user.genderPreference.toString().split('.').last;
           preferredLanguage = user.diet.toString().split('.').last;
+          filePath = user.filePath as String;
         });
       }
     } catch (e) {
@@ -86,6 +91,17 @@ class _ProfilePageState extends State<ProfilePage> {
     } finally {
       setState(() {
         _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _profileImage = File(pickedFile.path);
       });
     }
   }
@@ -315,9 +331,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Column(
                       children: [
                         const SizedBox(height: 16),
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: AssetImage('images/user.png'),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 50,
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : (filePath.isNotEmpty
+                                        ? (filePath.startsWith('http')
+                                            ? NetworkImage(filePath)
+                                            : FileImage(File(filePath)))
+                                        : AssetImage(
+                                            'images/default_profile.png'))
+                                    as ImageProvider,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text('$name',

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
-import 'package:foodbuds0_1/ui/home_screens/home_screens.dart';
+import 'package:foodbuds0_1/ui/home_screens/home_screen.dart';
+import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -22,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text,
       );
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ProfilePage(),
+        builder: (context) => HomeScreen(),
       ));
     } on FirebaseAuthException catch (e) {
       setState(() {

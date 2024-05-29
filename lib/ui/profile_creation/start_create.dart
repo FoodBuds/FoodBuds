@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/ui/profile_creation/add_photo.dart';
 import 'profile_creation.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 
@@ -81,7 +82,7 @@ class _StartCreateState extends State<StartCreate> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DietPage(
+                        builder: (context) => AddPhotoPage(
                           data: {
                             'id': _id,
                             'name': _name,

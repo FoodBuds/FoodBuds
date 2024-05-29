@@ -6,7 +6,6 @@ class User extends Equatable {
   final String surname;
   final String gender;
   final String bio;
-
   final String diet;
   final String genderPreference;
   final List<String> cuisine; 
@@ -21,7 +20,7 @@ class User extends Equatable {
     required this.bio,
     required this.diet,
     required this.genderPreference,
-    required this.cuisine, // Adjusted type
+    required this.cuisine, 
     this.filePath,
 
   });
@@ -35,8 +34,7 @@ class User extends Equatable {
         bio,
         diet,
         genderPreference,
-
-        cuisine, // This will handle list equality
+        cuisine, 
         filePath,
       ];
   Map<String, dynamic> toMap() {
@@ -85,7 +83,7 @@ class User extends Equatable {
       name: map['name'],
       surname: map['surname'],
       gender: map['gender'],
-      bio: map['aboutme'],
+      bio: map['bio'],
       diet: map['diet'],
       genderPreference: map['genderPreference'],
       cuisine: List<String>.from(map['cuisine']), // Ensure it's a list of strings

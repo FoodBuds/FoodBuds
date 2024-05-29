@@ -23,8 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
       bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
       bool hasLowercase = password.contains(RegExp(r'[a-z]'));
       bool hasDigits = password.contains(RegExp(r'[0-9]'));
-      bool hasSpecialCharacters = password.contains(RegExp(r'[!@#$%^&*()_+{}|:"<>?,./;\\\[\]`~=]'));
-      return password.length >= minLength && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
+      return password.length >= minLength && (hasUppercase || hasLowercase) && hasDigits;
   }
 
   Future<void> createUserWithEmailAndPassword() async {

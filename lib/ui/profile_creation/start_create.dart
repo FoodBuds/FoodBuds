@@ -17,6 +17,22 @@ class _StartCreateState extends State<StartCreate> {
   String _surname = '';
   String _aboutme = '';
   String _gender = '';
+  String _city = '';
+
+  final List<String> _cities = [
+    'Adana', 'Adiyaman', 'Afyonkarahisar', 'Ağri', 'Amasya', 'Ankara', 
+    'Antalya', 'Artvin', 'Aydin', 'Balikesir', 'Bilecik', 'Bingöl', 'Bitlis', 
+    'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 'Çankiri', 'Çorum', 'Denizli', 
+    'Diyarbakir', 'Edirne', 'Elaziğ', 'Erzincan', 'Erzurum', 'Eskişehir', 
+    'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 'Hatay', 'Isparta', 
+    'Mersin', 'İstanbul', 'İzmir', 'Kars', 'Kastamonu', 'Kayseri', 'Kirklareli', 
+    'Kirşehir', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Kahramanmaraş', 
+    'Mardin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Rize', 'Sakarya', 
+    'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 
+    'Şanliurfa', 'Uşak', 'Van', 'Yozgat', 'Zonguldak', 'Aksaray', 'Bayburt', 
+    'Karaman', 'Kirikkale', 'Batman', 'Şirnak', 'Bartin', 'Ardahan', 'Iğdir', 
+    'Yalova', 'Karabük', 'Kilis', 'Osmaniye', 'Düzce'
+  ];
 
   @override
   void initState() {
@@ -69,6 +85,8 @@ class _StartCreateState extends State<StartCreate> {
                 const SizedBox(height: 25),
                 buildGenderField(context),
                 const SizedBox(height: 25),
+                buildCityField(context),
+                const SizedBox(height: 25),
                 buildInputField(
                   label: 'About Me*',
                   hint: 'Hi! I\'m using FoodbuD',
@@ -80,7 +98,7 @@ class _StartCreateState extends State<StartCreate> {
                 SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
+                    if (_formKey.currentState!.validate() && _validateFields()) {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => AddPhotoPage(
                           data: {
@@ -88,14 +106,14 @@ class _StartCreateState extends State<StartCreate> {
                             'name': _name,
                             'surname': _surname,
                             'gender': _gender,
-                            'aboutme': _aboutme,
+                            'city': _city,
+                            'bio': _aboutme,
                           },
                         ),
                       ));
                     }
                   },
-                  child:
-                      Text('CONTINUE', style: TextStyle(color: Colors.amber)),
+                  child: Text('CONTINUE', style: TextStyle(color: Colors.amber)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -107,6 +125,22 @@ class _StartCreateState extends State<StartCreate> {
         ),
       ),
     );
+  }
+
+  bool _validateFields() {
+    if (_gender.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your gender')),
+      );
+      return false;
+    }
+    if (_city.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your city')),
+      );
+      return false;
+    }
+    return true;
   }
 
   Widget buildInputField(
@@ -190,12 +224,61 @@ class _StartCreateState extends State<StartCreate> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Gender',
+              'Gender*',
               style: TextStyle(color: Colors.black, fontSize: 16),
             ),
             Text(
-              _gender,
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              _gender.isEmpty ? 'Select Gender' : _gender,
+              style: TextStyle(color: _gender.isEmpty ? Colors.grey : Colors.black, fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCityField(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return Container(
+              height: 400,
+              child: ListView.builder(
+                itemCount: _cities.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(_cities[index]),
+                    onTap: () {
+                      setState(() {
+                        _city = _cities[index];
+                      });
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'City*',
+              style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            Text(
+              _city.isEmpty ? 'Select City' : _city,
+              style: TextStyle(color: _city.isEmpty ? Colors.grey : Colors.black, fontSize: 16),
             ),
           ],
         ),

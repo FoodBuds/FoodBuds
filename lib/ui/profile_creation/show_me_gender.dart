@@ -52,7 +52,7 @@ class _ShowMeGenderPageState extends State<ShowMeGenderPage> {
           builder: (context) => LocationPage(
             data: {
               ...widget.data,
-              'show_me_gender': _selectedGender,
+              'genderPreference': _selectedGender,
             },
           ),
         ));

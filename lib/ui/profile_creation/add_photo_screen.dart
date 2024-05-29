@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'profile_creation.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
-import 
 
 class AddPhotoPage extends StatefulWidget {
   const AddPhotoPage({super.key, required this.data});

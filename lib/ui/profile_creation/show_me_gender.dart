@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'location.dart';
+import 'package:foodbuds0_1/repositories/database_repository.dart';
+import 'package:foodbuds0_1/ui/profile_creation/alert.dart';
 
 class ShowMeGenderPage extends StatefulWidget {
   final Map<String, dynamic> data;
@@ -17,6 +18,21 @@ class _ShowMeGenderPageState extends State<ShowMeGenderPage> {
     setState(() {
       _selectedGender = gender;
     });
+    updateDataToBackend();
+  }
+
+  void updateDataToBackend() {
+    if (_selectedGender != null) {
+      final updatedData = {
+        ...widget.data,
+        'genderPreference': _selectedGender,
+      };
+      try {
+        DatabaseRepository().updateUser(updatedData);
+      } catch (error) {
+        print(error);
+      }
+    }
   }
 
   @override
@@ -49,12 +65,7 @@ class _ShowMeGenderPageState extends State<ShowMeGenderPage> {
       onPressed: () {
         _handleGenderSelection(label);
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => LocationPage(
-            data: {
-              ...widget.data,
-              'genderPreference': _selectedGender,
-            },
-          ),
+          builder: (context) => AlertPage(),
         ));
       },
       style: ElevatedButton.styleFrom(

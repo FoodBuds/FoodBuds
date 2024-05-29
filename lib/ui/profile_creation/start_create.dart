@@ -100,7 +100,7 @@ class _StartCreateState extends State<StartCreate> {
                   onPressed: () {
                     if (_formKey.currentState!.validate() && _validateFields()) {
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DietPage(
+                        builder: (context) => AddPhotoPage(
                           data: {
                             'id': _id,
                             'name': _name,
@@ -108,7 +108,6 @@ class _StartCreateState extends State<StartCreate> {
                             'gender': _gender,
                             'city': _city,
                             'bio': _aboutme,
-                            'filepath': '',
                           },
                         ),
                       ));

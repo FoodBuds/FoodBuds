@@ -55,7 +55,7 @@ class DatabaseRepository {
 
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         if (doc.exists) {
-          String userId = doc.id; // Belgenin ID'sini alıyoruz
+          String userId = doc.id; 
           userIds.add(userId);
         }
       }
@@ -76,4 +76,34 @@ class DatabaseRepository {
     }
     return null;
   }
+
+  Future<void> likeUser(String likerUserId, String likedUserId) async {
+    try {
+      // Belirli bir belge kimliği belirliyoruz, örneğin 'likerUserId_likedUserId'
+      String docId = '$likerUserId$likedUserId';
+
+      await _firebaseFirestore.collection('likes').doc(docId).set({
+        'likerUserId': likerUserId,
+        'likedUserId': likedUserId,
+      });
+      print("User liked successfully: $likerUserId liked $likedUserId");
+    } catch (e) {
+      print("Error liking user: $e");
+      rethrow;  // Rethrow the error to be caught by the calling function
+    }
+  }
+
+  Future<bool> checkForMatch(String userId, String likedUserId) async {
+    try {
+      DocumentSnapshot doc = await _firebaseFirestore.collection('likes').doc('$userId$likedUserId').get();
+      if (doc.exists) {
+        DocumentSnapshot reverseDoc = await _firebaseFirestore.collection('likes').doc('$likedUserId$userId').get();
+        return reverseDoc.exists;
+      }
+    } catch (e) {
+      print("Error checking for match: $e");
+    }
+    return false;
+  }
 }
+

@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.amber,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: FirstScreen(),
     );
   }
 }

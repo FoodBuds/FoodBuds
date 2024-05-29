@@ -12,7 +12,6 @@ class _MailVerificationPageState extends State<MailVerificationPage> {
   @override
   void initState() {
     super.initState();
-    // Send verification email when the page is first loaded
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await sendVerificationEmail(context);
     });

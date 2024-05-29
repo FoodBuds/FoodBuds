@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 import 'package:foodbuds0_1/models/user_model.dart';
+import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
 
 class DatabaseRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
@@ -19,7 +21,8 @@ class DatabaseRepository {
         .map((snap) => User.fromSnapshot(snap));
   }
 
-  Future<void> updateUser(String userId, Map<String, dynamic> updatedData) {
+  Future<void> updateUser(Map<String, dynamic> updatedData) async {
+    String? userId = await AuthenticationRepository().getUserId();
     return _firebaseFirestore
         .collection('users')
         .doc(userId)
@@ -29,6 +32,7 @@ class DatabaseRepository {
   Future<void> deleteUser(String userId) {
     return _firebaseFirestore.collection('users').doc(userId).delete();
   }
+
 
   Future<String?> uploadFile(File file) async {
     try {

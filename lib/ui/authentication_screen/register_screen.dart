@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
+import 'package:foodbuds0_1/repositories/database_repository.dart';
+import 'package:foodbuds0_1/ui/authentication_screen/verification_screen.dart';
+import 'package:foodbuds0_1/models/models.dart' as model;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -21,7 +23,6 @@ class _RegisterPageState extends State<RegisterPage> {
       bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
       bool hasLowercase = password.contains(RegExp(r'[a-z]'));
       bool hasDigits = password.contains(RegExp(r'[0-9]'));
-      // Genişletilmiş özel karakterler listesi
       bool hasSpecialCharacters = password.contains(RegExp(r'[!@#$%^&*()_+{}|:"<>?,./;\\\[\]`~=]'));
       return password.length >= minLength && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
   }
@@ -40,14 +41,24 @@ class _RegisterPageState extends State<RegisterPage> {
       });
       return;
     }
-
     try {
       await AuthenticationRepository().createUserWithEmailandPassword(
         email: _emailController.text,
-        password: _passwordController.text,
+        password: _passwordController.text
       );
+      model.User user = model.User(
+        id: AuthenticationRepository().currentUser!.uid,
+        name: '',
+        surname: '',
+        bio: '',
+        gender: '',
+        genderPreference: '',
+        diet: '',
+        cuisine: [],
+      );
+      DatabaseRepository().createUser(user);
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => StartCreate(),
+        builder: (context) => MailVerificationPage(),
       ));
     } on FirebaseAuthException catch (e) {
       setState(() {

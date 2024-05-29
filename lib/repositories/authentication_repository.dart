@@ -1,5 +1,3 @@
-import "dart:ffi";
-
 import "package:firebase_auth/firebase_auth.dart";
 
 class AuthenticationRepository {
@@ -45,6 +43,22 @@ class AuthenticationRepository {
       print('User deleted successfully');
     } else {
       print('No user is currently signed in');
+    }
+  }
+
+    Future<bool> isEmailVerified() async {
+    User? user = _firebaseAuth.currentUser;
+    if (user != null) {
+      await user.reload();
+      return user.emailVerified;
+    }
+    return false;
+  }
+
+  Future<void> sendVerificationEmail() async {
+    User? user = _firebaseAuth.currentUser;
+    if (user != null && !user.emailVerified) {
+      await user.sendEmailVerification();
     }
   }
 }

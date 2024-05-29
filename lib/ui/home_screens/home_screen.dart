@@ -63,6 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
+        iconSize: 30, // Increase icon size
       ),
     );
   }
@@ -81,33 +82,33 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   RangeValues _ageRange = const RangeValues(22, 34);
   int _userIndex = 0;
 
-final List<Map<String, String>> _users = [
-  {
-    'name': 'Rex',
-    'surname': 'Doe',
-    'gender': 'Male',
-    'bio': 'I love hiking and outdoor activities.',
-    'diet': 'Vegetarian',
-    'genderPreference': 'Female',
-    'cuisine': 'Italian, Mexican, Chinese',
-    'city': 'New York',
-    'distance': '5 miles',
-    'image': 'images/user.png'
-  },
-  {
-    'name': 'Anna',
-    'surname': 'Smith',
-    'gender': 'Female',
-    'bio': 'I am a foodie and love trying new recipes.',
-    'diet': 'Non-Vegetarian',
-    'genderPreference': 'Male',
-    'cuisine': 'Japanese, Thai, Indian',
-    'city': 'San Francisco',
-    'distance': '3 miles',
-    'image': 'images/user2.png'
-  },
-  // Add more users here
-];
+  final List<Map<String, String>> _users = [
+    {
+      'name': 'Rex',
+      'surname': 'Doe',
+      'gender': 'Male',
+      'bio': 'I love hiking and outdoor activities.',
+      'diet': 'Vegetarian',
+      'genderPreference': 'Female',
+      'cuisine': 'Italian, Mexican, Chinese',
+      'city': 'New York',
+      'distance': '5 miles',
+      'image': 'images/user.png'
+    },
+    {
+      'name': 'Anna',
+      'surname': 'Smith',
+      'gender': 'Female',
+      'bio': 'I am a foodie and love trying new recipes.',
+      'diet': 'Non-Vegetarian',
+      'genderPreference': 'Male',
+      'cuisine': 'Japanese, Thai, Indian',
+      'city': 'San Francisco',
+      'distance': '3 miles',
+      'image': 'images/user2.png'
+    },
+    // Add more users here
+  ];
 
   final PageController _pageController = PageController();
 
@@ -305,15 +306,15 @@ final List<Map<String, String>> _users = [
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
-                            SizedBox(height: 20), // Add some space above the image
+                            SizedBox(height: constraints.maxHeight * 0.1), 
                             Image.asset(
                               _users[index]['image']!, // User profile image
                               fit: BoxFit.cover,
                               width: constraints.maxWidth * 0.9,
-                              height: constraints.maxHeight * 0.5,
+                              height: constraints.maxHeight * 0.55,
                             ),
                             Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                               margin: const EdgeInsets.only(top: 20),
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -322,7 +323,7 @@ final List<Map<String, String>> _users = [
                               child: Column(
                                 children: [
                                   Text(
-                                    _users[index]['name']!,
+                                    _users[index]['name']! + ' ' +_users[index]['surname']!,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 24,
@@ -330,7 +331,7 @@ final List<Map<String, String>> _users = [
                                     ),
                                   ),
                                   Text(
-                                    _users[index]['distance']!,
+                                    _users[index]['city']!,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
@@ -346,12 +347,12 @@ final List<Map<String, String>> _users = [
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0), // Increase the padding to move buttons higher
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: <Widget>[
                       CircleAvatar(
-                        radius: constraints.maxWidth * 0.08,
+                        radius: constraints.maxWidth * 0.1, // Increase circle avatar size
                         backgroundColor: Colors.red,
                         child: IconButton(
                           icon: const Icon(Icons.clear, color: Colors.white),
@@ -359,7 +360,7 @@ final List<Map<String, String>> _users = [
                         ),
                       ),
                       CircleAvatar(
-                        radius: constraints.maxWidth * 0.08,
+                        radius: constraints.maxWidth * 0.1, // Increase circle avatar size
                         backgroundColor: Colors.blue,
                         child: IconButton(
                           icon: const Icon(Icons.favorite, color: Colors.white),
@@ -367,7 +368,7 @@ final List<Map<String, String>> _users = [
                         ),
                       ),
                       CircleAvatar(
-                        radius: constraints.maxWidth * 0.08,
+                        radius: constraints.maxWidth * 0.1, // Increase circle avatar size
                         backgroundColor: Colors.green,
                         child: IconButton(
                           icon: const Icon(Icons.check, color: Colors.white),

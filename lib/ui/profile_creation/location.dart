@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'alert.dart';
-import 'package:foodbuds0_1/models/models.dart';
+import 'package:foodbuds0_1/models/models.dart' as model;
 import 'package:foodbuds0_1/repositories/repositories.dart';
 
 class LocationPage extends StatelessWidget {
@@ -8,16 +8,13 @@ class LocationPage extends StatelessWidget {
 
   const LocationPage({Key? key, required this.data}) : super(key: key);
 
-  void sendDataToBackend() {
-    // Backend'e gönderme işlemini burada gerçekleştirin.
-    // Örneğin, HTTP POST isteği yapabilirsiniz.
-    print('Data to be sent to backend: ${User.fromMap(data)}');
+  void updateDataToBackend() {
     try {
-      DatabaseRepository().createUser(User.fromMap(data));
+      DatabaseRepository().updateUser(data);
     } catch (error) {
       print(error);
     }
-    // // backend'e atılacak
+
   }
 
   @override
@@ -64,7 +61,7 @@ class LocationPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: TextButton(
                 onPressed: () {
-                  sendDataToBackend();
+                  updateDataToBackend();
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => AlertPage(),
                   ));

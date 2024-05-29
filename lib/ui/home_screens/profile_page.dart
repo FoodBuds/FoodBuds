@@ -13,8 +13,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late AuthenticationRepository _authRepo;
-  late DatabaseRepository _databaseRepo;
   auth.User? _currentUser;
   bool _isLoading = true;
 
@@ -35,8 +33,6 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _authRepo = AuthenticationRepository();
-    _databaseRepo = DatabaseRepository();
     _fetchUserData();
   }
 
@@ -46,15 +42,14 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     try {
-      String? userId = await _authRepo.getUserId();
+      String? userId = await AuthenticationRepository().getUserId();
       if (userId != null) {
-        model.User user = await _databaseRepo.getUser(userId).first;
+        model.User user = await DatabaseRepository().getUser(userId).first;
         setState(() {
           name = user.name;
-          email = _authRepo.currentUser?.email ?? '';
+          email = AuthenticationRepository().currentUser?.email ?? '';
           _emailController.text = email;
-          showMe = user.genderPreference.toString().split('.').last;
-          preferredLanguage = user.diet.toString().split('.').last;
+          showMe = user.genderPreference;
         });
       }
     } catch (e) {
@@ -72,10 +67,10 @@ class _ProfilePageState extends State<ProfilePage> {
     });
 
     try {
-      String? userId = await _authRepo.getUserId();
+      String? userId = await AuthenticationRepository().getUserId();
       if (userId != null) {
-        await _databaseRepo.deleteUser(userId);
-        await _authRepo.deleteUser();
+        await DatabaseRepository().deleteUser(userId);
+        await AuthenticationRepository().deleteUser();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => FirstScreen()),

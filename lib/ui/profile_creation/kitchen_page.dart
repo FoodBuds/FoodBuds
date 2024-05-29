@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/profile_creation/diet_page.dart';
 import 'package:foodbuds0_1/ui/profile_creation/profile_creation.dart';
 
 class KitchenPage extends StatefulWidget {
@@ -69,7 +68,7 @@ class _KitchenState extends State<KitchenPage> {
             builder: (context) => ShowMeGenderPage(
               data: {
                 ...widget.data,
-                'cuisines': _selectedCuisines.toList(),
+                'cuisine': _selectedCuisines.toList(),
               },
             ),
           ));

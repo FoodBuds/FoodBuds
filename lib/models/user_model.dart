@@ -1,17 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:foodbuds0_1/models/models.dart';
-import 'package:intl/intl.dart';
 
 class User extends Equatable {
   final String? id;
   final String name;
   final String surname;
-
   final String gender;
   final String bio;
-  final Diet diet;
-  final GenderPreference genderPreference;
+  final String diet;
+  final String genderPreference;
+  final List<String> cuisine; 
+  final String? filePath;
 
   const User({
     this.id,
@@ -21,6 +20,8 @@ class User extends Equatable {
     required this.bio,
     required this.diet,
     required this.genderPreference,
+    required this.cuisine, // Adjusted type
+    this.filePath,
   });
 
   @override
@@ -32,34 +33,20 @@ class User extends Equatable {
         bio,
         diet,
         genderPreference,
+        cuisine, // This will handle list equality
+        filePath,
       ];
 
-  static User fromSnapshot2(DocumentSnapshot snap) {
-    User user = User(
-      id: snap.id,
-      name: snap['name'],
-      surname: snap['surname'],
-      gender: snap['gender'],
-      bio: snap['bio'],
-      diet: Diet.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['diet'].toString().toLowerCase()),
-      genderPreference: GenderPreference.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['genderPreference'].toString().toLowerCase()),
-    );
-    return user;
-  }
-
-  // firebase holds the data as json objects and this function convert the object to a json object.
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'surname': surname,
       'gender': gender,
       'bio': bio,
-      'diet': diet.toString().split('.').last,
-      'genderPreference': genderPreference.toString().split('.').last,
+      'diet': diet,
+      'genderPreference': genderPreference,
+      'cuisine': cuisine, // No change needed here, List<String> works fine
+      'filePath': filePath,
     };
   }
 
@@ -69,8 +56,10 @@ class User extends Equatable {
     String? surname,
     String? gender,
     String? bio,
-    Diet? diet,
-    GenderPreference? genderPreference,
+    String? diet,
+    String? genderPreference,
+    List<String>? cuisine, // Adjusted type
+    String? filePath,
   }) {
     return User(
       id: id ?? this.id,
@@ -80,6 +69,8 @@ class User extends Equatable {
       bio: bio ?? this.bio,
       diet: diet ?? this.diet,
       genderPreference: genderPreference ?? this.genderPreference,
+      cuisine: cuisine ?? this.cuisine, // Keep existing list if not updated
+      filePath: filePath ?? this.filePath,
     );
   }
 
@@ -90,12 +81,10 @@ class User extends Equatable {
       surname: map['surname'],
       gender: map['gender'],
       bio: map['aboutme'],
-      diet: Diet.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          map['diet'].toString().toLowerCase()),
-      genderPreference: GenderPreference.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          map['show_me_gender'].toString().toLowerCase()),
+      diet: map['diet'],
+      genderPreference: map['genderPreference'],
+      cuisine: List<String>.from(map['cuisine']), // Ensure it's a list of strings
+      filePath: map['filePath'],
     );
   }
 
@@ -106,12 +95,10 @@ class User extends Equatable {
       surname: snap['surname'],
       gender: snap['gender'],
       bio: snap['bio'],
-      diet: Diet.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['diet'].toString().toLowerCase()),
-      genderPreference: GenderPreference.values.firstWhere((e) =>
-          e.toString().split('.').last.toLowerCase() ==
-          snap['genderPreference'].toString().toLowerCase()),
+      diet: snap['diet'],
+      genderPreference: snap['genderPreference'],
+      cuisine: List<String>.from(snap['cuisine']), // Convert dynamic list to List<String>
+      filePath: snap['filePath'],
     );
   }
 }

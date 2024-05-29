@@ -54,6 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
         genderPreference: '',
         diet: '',
         cuisine: [],
+        city: '',
       );
       DatabaseRepository().createUser(user);
       Navigator.of(context).push(MaterialPageRoute(

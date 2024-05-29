@@ -10,6 +10,7 @@ class User extends Equatable {
   final String genderPreference;
   final List<String> cuisine; 
   final String? filePath;
+  final String city;
 
 
   const User({
@@ -22,6 +23,7 @@ class User extends Equatable {
     required this.genderPreference,
     required this.cuisine, 
     this.filePath,
+    required this.city,
 
   });
 
@@ -36,6 +38,7 @@ class User extends Equatable {
         genderPreference,
         cuisine, 
         filePath,
+        city,
       ];
   Map<String, dynamic> toMap() {
     return {
@@ -47,7 +50,7 @@ class User extends Equatable {
       'genderPreference': genderPreference,
       'cuisine': cuisine, // No change needed here, List<String> works fine
       'filePath': filePath,
-
+      'city': city,
     };
   }
 
@@ -61,6 +64,7 @@ class User extends Equatable {
     String? genderPreference,
     List<String>? cuisine, // Adjusted type
     String? filePath,
+    String? city,
 
   }) {
     return User(
@@ -73,7 +77,7 @@ class User extends Equatable {
       genderPreference: genderPreference ?? this.genderPreference,
       cuisine: cuisine ?? this.cuisine, // Keep existing list if not updated
       filePath: filePath ?? this.filePath,
-
+      city: city ?? this.city,
     );
   }
 
@@ -88,7 +92,7 @@ class User extends Equatable {
       genderPreference: map['genderPreference'],
       cuisine: List<String>.from(map['cuisine']), // Ensure it's a list of strings
       filePath: map['filePath'],
-
+      city: map['city'],
     );
   }
 
@@ -103,6 +107,7 @@ class User extends Equatable {
       genderPreference: snap['genderPreference'],
       cuisine: List<String>.from(snap['cuisine']), // Convert dynamic list to List<String>
       filePath: snap['filePath'],
+      city: snap['city'],
     );
   }
 }

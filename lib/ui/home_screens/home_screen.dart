@@ -81,11 +81,33 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   RangeValues _ageRange = const RangeValues(22, 34);
   int _userIndex = 0;
 
-  final List<Map<String, String>> _users = [
-    {'name': 'Rex, 27', 'distance': '5 miles', 'image': 'images/user.png'},
-    {'name': 'Anna, 24', 'distance': '3 miles', 'image': 'images/user2.png'},
-    // Add more users here
-  ];
+final List<Map<String, String>> _users = [
+  {
+    'name': 'Rex',
+    'surname': 'Doe',
+    'gender': 'Male',
+    'bio': 'I love hiking and outdoor activities.',
+    'diet': 'Vegetarian',
+    'genderPreference': 'Female',
+    'cuisine': 'Italian, Mexican, Chinese',
+    'city': 'New York',
+    'distance': '5 miles',
+    'image': 'images/user.png'
+  },
+  {
+    'name': 'Anna',
+    'surname': 'Smith',
+    'gender': 'Female',
+    'bio': 'I am a foodie and love trying new recipes.',
+    'diet': 'Non-Vegetarian',
+    'genderPreference': 'Male',
+    'cuisine': 'Japanese, Thai, Indian',
+    'city': 'San Francisco',
+    'distance': '3 miles',
+    'image': 'images/user2.png'
+  },
+  // Add more users here
+];
 
   final PageController _pageController = PageController();
 
@@ -265,7 +287,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Expanded(
-
                   child: PageView.builder(
                     controller: _pageController,
                     itemCount: _users.length,
@@ -275,47 +296,53 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       });
                     },
                     itemBuilder: (context, index) {
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox(height: 20), // Add some space above the image
-                          Image.asset(
-                            _users[index]['image']!, // User profile image
-                            fit: BoxFit.cover,
-                            width: constraints.maxWidth * 0.9,
-                            height: constraints.maxHeight * 0.5,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            margin: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ProfileDetail(user: _users[index]),
+                          ));
+                        },
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SizedBox(height: 20), // Add some space above the image
+                            Image.asset(
+                              _users[index]['image']!, // User profile image
+                              fit: BoxFit.cover,
+                              width: constraints.maxWidth * 0.9,
+                              height: constraints.maxHeight * 0.5,
                             ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  _users[index]['name']!,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              margin: const EdgeInsets.only(top: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    _users[index]['name']!,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  _users[index]['distance']!,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
+                                  Text(
+                                    _users[index]['distance']!,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
-
                   ),
                 ),
                 Padding(

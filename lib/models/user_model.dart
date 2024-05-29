@@ -40,6 +40,7 @@ class User extends Equatable {
         filePath,
         city,
       ];
+
   Map<String, dynamic> toMap() {
     return {
       'name': name,

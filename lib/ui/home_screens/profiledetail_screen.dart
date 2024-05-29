@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/models/user_model.dart'; // User modelini import edin
 
 class ProfileDetail extends StatelessWidget {
-  final Map<String, String> user;
+  final User user;
 
   ProfileDetail({required this.user});
 
@@ -9,7 +10,7 @@ class ProfileDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user['name']} ${user['surname']}'),
+        title: Text('${user.name} ${user.surname}'),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -19,8 +20,8 @@ class ProfileDetail extends StatelessWidget {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6, // Profile image covers most of the screen
               width: double.infinity,
-              child: Image.asset(
-                user['image']!,
+              child: Image.network(
+                'images/user.png',
                 fit: BoxFit.cover,
               ),
             ),
@@ -45,7 +46,7 @@ class ProfileDetail extends StatelessWidget {
                   children: <Widget>[
                     Center(
                       child: Text(
-                        '${user['name']} ${user['surname']}',
+                        '${user.name} ${user.surname}',
                         style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
@@ -54,17 +55,17 @@ class ProfileDetail extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildInfoText('Gender: ${user['gender']}'),
+                    _buildInfoText('Gender: ${user.gender}'),
                     const Divider(),
-                    _buildInfoText('City: ${user['city']}'),
+                    _buildInfoText('City: ${user.city}'),
                     const Divider(),
-                    _buildInfoText('Bio: ${user['bio'] ?? 'No bio available'}'),
+                    _buildInfoText('Bio: ${user.bio ?? 'No bio available'}'),
                     const Divider(),
-                    _buildInfoText('Diet: ${user['diet'] ?? 'No diet preference'}'),
+                    _buildInfoText('Diet: ${user.diet ?? 'No diet preference'}'),
                     const Divider(),
-                    _buildInfoText('Gender Preference: ${user['genderPreference'] ?? 'No gender preference'}'),
+                    _buildInfoText('Gender Preference: ${user.genderPreference ?? 'No gender preference'}'),
                     const Divider(),
-                    _buildInfoText('Favorite Cuisines: ${(user['cuisine'] ?? 'No favorite cuisines').split(',').join(', ')}'),
+                    _buildInfoText('Favorite Cuisines: ${user.cuisine ?? 'No favorite cuisines'}'),
                   ],
                 ),
               ),

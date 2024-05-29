@@ -4,7 +4,6 @@ import 'package:foodbuds0_1/models/user_model.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-
 class DatabaseRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
@@ -33,25 +32,48 @@ class DatabaseRepository {
     return _firebaseFirestore.collection('users').doc(userId).delete();
   }
 
-
   Future<String?> uploadFile(File file) async {
     try {
-      // Create a reference to the location you want to upload to
-
       Reference ref =
           _firebaseStorage.ref().child('uploads/${file.path.split('/').last}');
 
-      // Upload the file
       await ref.putFile(file);
 
-      // Get the download URL (optional)
       String downloadURL = await ref.getDownloadURL();
 
       return downloadURL;
     } on FirebaseException catch (e) {
-      // Handle errors
       print('Failed to upload file: $e');
       return null;
     }
+  }
+
+  Future<List<String>> getUserIds() async {
+    List<String> userIds = [];
+    try {
+      QuerySnapshot querySnapshot = await _firebaseFirestore.collection('users').get();
+
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        if (doc.exists) {
+          String userId = doc.id; // Belgenin ID'sini alıyoruz
+          userIds.add(userId);
+        }
+      }
+    } catch (e) {
+      print("Error fetching user IDs: $e");
+    }
+    return userIds;
+  }
+
+  Future<User?> getUserById(String userId) async {
+    try {
+      DocumentSnapshot doc = await _firebaseFirestore.collection('users').doc(userId).get();
+      if (doc.exists) {
+        return User.fromSnapshot(doc);
+      }
+    } catch (e) {
+      print("Error fetching user data: $e");
+    }
+    return null;
   }
 }

@@ -50,13 +50,16 @@ class _KitchenState extends State<KitchenPage> {
       body: ListView(
         children: _cuisineIcons.keys.map((String cuisine) {
           return Card(
-            color: _selectedCuisines.contains(cuisine) ? Colors.green : Colors.white,
+            color: _selectedCuisines.contains(cuisine)
+                ? Colors.green
+                : Colors.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
             child: ListTile(
               title: Text(cuisine, style: const TextStyle(color: Colors.black)),
-              trailing: Image.asset(_cuisineIcons[cuisine]!, width: 35, height: 35),
+              trailing:
+                  Image.asset(_cuisineIcons[cuisine]!, width: 35, height: 35),
               onTap: () => _handleCuisineSelection(cuisine),
             ),
           );
@@ -64,6 +67,7 @@ class _KitchenState extends State<KitchenPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          print(widget.data);
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => ShowMeGenderPage(
               data: {

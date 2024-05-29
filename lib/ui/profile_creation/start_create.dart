@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/profile_creation/add_photo_screen.dart';
+import 'package:foodbuds0_1/ui/profile_creation/add_photo.dart';
 import 'profile_creation.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 

@@ -8,6 +8,7 @@ class LocationPage extends StatelessWidget {
 
   const LocationPage({Key? key, required this.data}) : super(key: key);
 
+
   void updateDataToBackend() {
     try {
       DatabaseRepository().updateUser(data);

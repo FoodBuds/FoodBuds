@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/ui/profile_creation/kitchen_page.dart';
-import 'show_me_gender.dart';
 
 class DietPage extends StatefulWidget {
   final Map<String, dynamic> data;

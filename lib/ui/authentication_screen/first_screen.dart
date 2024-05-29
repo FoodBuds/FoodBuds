@@ -28,9 +28,7 @@ class _LoginScreenState extends State<FirstScreen> {
                   style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black
-                    )
-                  ),
+                      color: Colors.black)),
               const SizedBox(height: 80),
               const Text(
                 "By clicking Log In or Register, you agree with our Terms. Learn how we process your data in our Privacy Policy and Cookies Policy.",

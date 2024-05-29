@@ -19,7 +19,7 @@ class _ShowMeGenderPageState extends State<ShowMeGenderPage> {
     });
   }
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.amber,

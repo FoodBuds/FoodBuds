@@ -119,6 +119,13 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     }
   }
 
+  Future<void> _dislikeUser(String dislikedUserId) async {
+    String? dislikerUserId = await AuthenticationRepository().getUserId();
+    if (dislikerUserId != null) {
+      await _databaseRepository.dislikeUser(dislikerUserId, dislikedUserId);
+    }
+  }
+
   void _showFilterDialog() {
     showDialog(
       context: context,
@@ -249,11 +256,13 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 
   void _swipeLeft() {
-    setState(() {
-      if (_users.isNotEmpty) {
+    if (_users.isNotEmpty) {
+      String dislikedUserId = _users.first.id!;
+      _dislikeUser(dislikedUserId);
+      setState(() {
         _users.removeAt(0);
-      }
-    });
+      });
+    }
   }
 
   void _swipeRight() async {

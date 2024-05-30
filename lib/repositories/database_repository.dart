@@ -79,7 +79,7 @@ class DatabaseRepository {
 
   Future<void> likeUser(String likerUserId, String likedUserId) async {
     try {
-      // Belirli bir belge kimliği belirliyoruz, örneğin 'likerUserId_likedUserId'
+
       String docId = '$likerUserId$likedUserId';
 
       await _firebaseFirestore.collection('likes').doc(docId).set({
@@ -87,6 +87,22 @@ class DatabaseRepository {
         'likedUserId': likedUserId,
       });
       print("User liked successfully: $likerUserId liked $likedUserId");
+    } catch (e) {
+      print("Error liking user: $e");
+      rethrow; 
+    }
+  }
+  
+    Future<void> dislikeUser(String dislikerUserId, String dislikedUserId) async {
+    try {
+
+      String docId = '$dislikerUserId$dislikedUserId';
+
+      await _firebaseFirestore.collection('dislikes').doc(docId).set({
+        'dislikerUserId': dislikerUserId,
+        'dislikedUserId': dislikedUserId,
+      });
+      print("User liked successfully: $dislikerUserId liked $dislikedUserId");
     } catch (e) {
       print("Error liking user: $e");
       rethrow;  // Rethrow the error to be caught by the calling function

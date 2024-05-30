@@ -15,6 +15,7 @@ class AddPhotoPage extends StatefulWidget {
 class _AddPhotoPageState extends State<AddPhotoPage> {
   final ImagePicker _picker = ImagePicker();
   File? _image;
+  bool _isLoading = false; // New state variable for loading indicator
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -26,19 +27,27 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
   }
 
   Future<void> downloadPhoto() async {
-    try {
-      String filePath =
-          await DatabaseRepository().uploadFile(_image as File) as String;
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => DietPage(
-          data: {
-            ...widget.data,
-            'filePath': filePath,
-          },
-        ),
-      ));
-    } catch (e) {
-      print(e);
+    if (_image != null) {
+      try {
+        setState(() {
+          _isLoading = true; // Turn on loading indicator
+        });
+        String filePath = await DatabaseRepository().uploadFile(_image!) as String;
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => DietPage(
+            data: {
+              ...widget.data,
+              'filePath': filePath,
+            },
+          ),
+        ));
+      } catch (e) {
+        print(e);
+      } finally {
+        setState(() {
+          _isLoading = false; // Turn off loading indicator
+        });
+      }
     }
   }
 
@@ -81,15 +90,17 @@ class _AddPhotoPageState extends State<AddPhotoPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white, // Background color
-                    foregroundColor: Colors.amber, // Text color
-                  ),
-                  onPressed: downloadPhoto,
-                  child:
-                      const Text('CONTINUE', style: TextStyle(fontSize: 18.0)),
-                ),
+                _isLoading
+                    ? CircularProgressIndicator() // Show loading indicator when uploading
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white, // Background color
+                          foregroundColor: Colors.amber, // Text color
+                        ),
+                        onPressed: downloadPhoto,
+                        child:
+                            const Text('CONTINUE', style: TextStyle(fontSize: 18.0)),
+                      ),
               ],
             ),
           ),

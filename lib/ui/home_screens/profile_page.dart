@@ -20,19 +20,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String name = '';
   String email = '';
+  String bio = '';
   String currentPlan = 'Free';
   String showMe = 'Men';
-  String preferredLanguage = 'English';
+  String diet = 'Herbivore';
+  String city = 'Istanbul';
+  List<String> cuisine = [];
   String filePath = "";
   bool isEditing = false;
   bool isEditingPlan = false;
-  double ageRangeStart = 22;
-  double ageRangeEnd = 34;
-  double maxDistance = 100;
   int _selectedSubscriptionIndex = -1;
 
   File? _profileImage;
   final _emailController = TextEditingController();
+  final _bioController = TextEditingController();
 
   @override
   void initState() {
@@ -55,8 +56,11 @@ class _ProfilePageState extends State<ProfilePage> {
           name = user.name;
           email = _authRepo.currentUser?.email ?? '';
           _emailController.text = email;
+          bio = user.bio;
+          _bioController.text = bio;
           showMe = user.genderPreference.toString().split('.').last;
-          preferredLanguage = user.diet.toString().split('.').last;
+          diet = user.diet.toString().split('.').last;
+          cuisine = user.cuisine;
           filePath = user.filePath as String;
         });
       }
@@ -242,54 +246,286 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  void _changeLanguage() async {
-    String? selectedLanguage = await showDialog<String>(
+  void _changeDiet() async {
+    String? selectedDiet = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('Language'),
+          title: const Text('Diet'),
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Afrikaans');
+                Navigator.pop(context, 'Herbivore');
               },
-              child: const Text('Afrikaans'),
+              child: const Text('Herbivore'),
             ),
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Akan');
+                Navigator.pop(context, 'Vegetarian');
               },
-              child: const Text('Akan'),
+              child: const Text('Vegetarian'),
             ),
-            // Add more language options here...
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'English');
+                Navigator.pop(context, 'Vegan');
               },
-              child: const Text('English'),
+              child: const Text('Vegan'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Pescatarian');
+              },
+              child: const Text('Pescatarian'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Flexitarian');
+              },
+              child: const Text('Flexitarian'),
             ),
           ],
         );
       },
     );
 
-    if (selectedLanguage != null) {
+    if (selectedDiet != null) {
       setState(() {
-        preferredLanguage = selectedLanguage;
+        diet = selectedDiet;
       });
     }
   }
 
-  void _validateAndSave() {
-    final String email = _emailController.text;
+  void _changeCity() async {
+    String? selectedCity = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: const Text('City'),
+          children: <Widget>[
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Adana');
+              },
+              child: const Text('Adana'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Adıyaman');
+              },
+              child: const Text('Adıyaman'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Afyonkarahisar');
+              },
+              child: const Text('Afyonkarahisar'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Ağrı');
+              },
+              child: const Text('Ağrı'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Aksaray');
+              },
+              child: const Text('Aksaray'),
+            ),
+            SimpleDialogOption(
+              onPressed: () {
+                Navigator.pop(context, 'Istanbul');
+              },
+              child: const Text('Istanbul'),
+            ),
+          ],
+        );
+      },
+    );
 
+    if (selectedCity != null) {
+      setState(() {
+        city = selectedCity;
+      });
+    }
+  }
+
+  void _changeCuisine() async {
+    List<String>? selectedCuisines = await showDialog<List<String>>(
+      context: context,
+      builder: (BuildContext context) {
+        List<String> selected = List.from(cuisine);
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Cuisine'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CheckboxListTile(
+                    title: const Text('Turkish'),
+                    value: selected.contains('Turkish'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Turkish')
+                            : selected.remove('Turkish');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Italian'),
+                    value: selected.contains('Italian'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Italian')
+                            : selected.remove('Italian');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('French'),
+                    value: selected.contains('French'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('French')
+                            : selected.remove('French');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Chinese'),
+                    value: selected.contains('Chinese'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Chinese')
+                            : selected.remove('Chinese');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Japanese'),
+                    value: selected.contains('Japanese'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Japanese')
+                            : selected.remove('Japanese');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Indian'),
+                    value: selected.contains('Indian'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Indian')
+                            : selected.remove('Indian');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Mexican'),
+                    value: selected.contains('Mexican'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Mexican')
+                            : selected.remove('Mexican');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Spanish'),
+                    value: selected.contains('Spanish'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Spanish')
+                            : selected.remove('Spanish');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('Thai'),
+                    value: selected.contains('Thai'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('Thai')
+                            : selected.remove('Thai');
+                      });
+                    },
+                  ),
+                  CheckboxListTile(
+                    title: const Text('American'),
+                    value: selected.contains('American'),
+                    onChanged: (bool? value) {
+                      setState(() {
+                        value == true
+                            ? selected.add('American')
+                            : selected.remove('American');
+                      });
+                    },
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                TextButton(
+                  child: const Text('Save'),
+                  onPressed: () {
+                    Navigator.pop(context, selected);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    if (selectedCuisines != null) {
+      setState(() {
+        cuisine = selectedCuisines;
+      });
+    }
+  }
+
+  void _validateAndSave() async {
+    final String email = _emailController.text;
+    final String bio = _bioController.text;
     final bool isValidEmail = email.contains('@');
 
     if (isValidEmail) {
-      setState(() {
-        this.email = email;
-        isEditing = false;
-      });
+      String? userId = await _authRepo.getUserId();
+      if (userId != null) {
+        Map<String, dynamic> updatedData = {
+          'name': name,
+          'email': email,
+          'bio': bio,
+          'genderPreference': showMe,
+          'diet': diet,
+          'cuisine': cuisine,
+          'filePath': filePath,
+          'city': city,
+        };
+        await _databaseRepo.updateUser(updatedData);
+        setState(() {
+          this.email = email;
+          this.bio = bio;
+          isEditing = false;
+        });
+      }
     } else {
       showDialog(
         context: context,
@@ -389,6 +625,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                   )
                                 : ProfileDisplayField(
                                     label: 'Email', value: email),
+                            isEditing
+                                ? ProfileEditableField(
+                                    label: 'Bio',
+                                    value: _bioController.text,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _bioController.text = value;
+                                      });
+                                    },
+                                  )
+                                : ProfileDisplayField(
+                                    label: 'Bio', value: bio),
                             if (isEditing)
                               ElevatedButton(
                                 onPressed: _validateAndSave,
@@ -432,44 +680,25 @@ class _ProfilePageState extends State<ProfilePage> {
                         ProfileSection(
                           title: 'Discovery Settings',
                           children: [
-                            const ProfileDisplayField(
-                                label: 'Location',
-                                value: 'My Current Location',
-                                isEditable: false),
                             ProfileDisplayField(
-                              label: 'Preferred Languages',
-                              value: preferredLanguage,
-                              onTap: _changeLanguage,
+                              label: 'City',
+                              value: city,
+                              onTap: _changeCity,
+                            ),
+                            ProfileDisplayField(
+                              label: 'Diet',
+                              value: diet,
+                              onTap: _changeDiet,
                             ),
                             ProfileDisplayField(
                               label: 'Show Me',
                               value: showMe,
                               onTap: _changeShowMeOption,
                             ),
-                            ProfileRangeField(
-                              label: 'Age Range',
-                              start: ageRangeStart,
-                              end: ageRangeEnd,
-                              min: 18,
-                              max: 60,
-                              onChanged: (RangeValues values) {
-                                setState(() {
-                                  ageRangeStart = values.start;
-                                  ageRangeEnd = values.end;
-                                });
-                              },
-                            ),
-                            ProfileRangeField(
-                              label: 'Maximum Distance',
-                              start: 0,
-                              end: maxDistance,
-                              min: 0,
-                              max: 200,
-                              onChanged: (RangeValues values) {
-                                setState(() {
-                                  maxDistance = values.end;
-                                });
-                              },
+                            ProfileDisplayField(
+                              label: 'Cuisine',
+                              value: cuisine.join(', '),
+                              onTap: _changeCuisine,
                             ),
                           ],
                         ),
@@ -611,40 +840,6 @@ class ProfileEditableField extends StatelessWidget {
           focusedBorder:
               UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         ),
-      ),
-    );
-  }
-}
-
-class ProfileRangeField extends StatelessWidget {
-  final String label;
-  final double start;
-  final double end;
-  final double min;
-  final double max;
-  final Function(RangeValues) onChanged;
-
-  const ProfileRangeField({
-    required this.label,
-    required this.start,
-    required this.end,
-    required this.min,
-    required this.max,
-    required this.onChanged,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(label, style: TextStyle(color: Colors.black)),
-      subtitle: RangeSlider(
-        values: RangeValues(start, end),
-        min: min,
-        max: max,
-        onChanged: onChanged,
-        activeColor: Colors.amber,
-        inactiveColor: Colors.black12,
       ),
     );
   }

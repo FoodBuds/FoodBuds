@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+
 class User extends Equatable {
   final String? id;
   final String name;
@@ -12,7 +13,6 @@ class User extends Equatable {
   final String? filePath;
   final String city;
 
-
   const User({
     this.id,
     required this.name,
@@ -24,7 +24,6 @@ class User extends Equatable {
     required this.cuisine, 
     this.filePath,
     required this.city,
-
   });
 
   @override
@@ -36,7 +35,7 @@ class User extends Equatable {
         bio,
         diet,
         genderPreference,
-        cuisine, 
+        cuisine,
         filePath,
         city,
       ];
@@ -49,7 +48,7 @@ class User extends Equatable {
       'bio': bio,
       'diet': diet,
       'genderPreference': genderPreference,
-      'cuisine': cuisine, // No change needed here, List<String> works fine
+      'cuisine': cuisine,
       'filePath': filePath,
       'city': city,
     };
@@ -63,10 +62,9 @@ class User extends Equatable {
     String? bio,
     String? diet,
     String? genderPreference,
-    List<String>? cuisine, // Adjusted type
+    List<String>? cuisine,
     String? filePath,
     String? city,
-
   }) {
     return User(
       id: id ?? this.id,
@@ -76,7 +74,7 @@ class User extends Equatable {
       bio: bio ?? this.bio,
       diet: diet ?? this.diet,
       genderPreference: genderPreference ?? this.genderPreference,
-      cuisine: cuisine ?? this.cuisine, // Keep existing list if not updated
+      cuisine: cuisine ?? this.cuisine,
       filePath: filePath ?? this.filePath,
       city: city ?? this.city,
     );
@@ -91,7 +89,7 @@ class User extends Equatable {
       bio: map['bio'],
       diet: map['diet'],
       genderPreference: map['genderPreference'],
-      cuisine: List<String>.from(map['cuisine']), // Ensure it's a list of strings
+      cuisine: List<String>.from(map['cuisine']),
       filePath: map['filePath'],
       city: map['city'],
     );
@@ -106,7 +104,7 @@ class User extends Equatable {
       bio: snap['bio'],
       diet: snap['diet'],
       genderPreference: snap['genderPreference'],
-      cuisine: List<String>.from(snap['cuisine']), // Convert dynamic list to List<String>
+      cuisine: List<String>.from(snap['cuisine']),
       filePath: snap['filePath'],
       city: snap['city'],
     );

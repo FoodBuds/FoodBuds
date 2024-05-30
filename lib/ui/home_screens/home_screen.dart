@@ -93,7 +93,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 
   Future<void> _fetchUsers() async {
-    List<String> userIds = await _databaseRepository.getUserIds();
+    List<String> userIds = await _databaseRepository.matchUsers();
     List<model.User> users = [];
     for (String userId in userIds) {
       model.User? user = await _databaseRepository.getUserById(userId);

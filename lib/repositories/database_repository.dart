@@ -121,5 +121,59 @@ class DatabaseRepository {
     }
     return false;
   }
+
+  Future<List<String>> matchUsers() async {
+    String currentUserId = await AuthenticationRepository().getUserId() as String;
+    User currentUser = await getUserById(currentUserId) as User;
+    List<MapEntry<User, int>> potentialMatches = [];
+    QuerySnapshot querySnapshot;
+    if (currentUser.genderPreference == 'everyone') {
+      querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+    } else {
+      querySnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .where('gender', isEqualTo: currentUser.genderPreference)
+          .get();
+    }
+
+    List<User> allUsers = querySnapshot.docs.map((doc) => User.fromSnapshot(doc)).toList();
+
+    for (User user in allUsers) {
+      // Kendi kendisiyle eşleşmeyi önlemek için kontrol ekle
+      if (user.id == currentUser.id) {
+        continue;
+      }
+
+      int score = 0;
+
+      // Diyet uyumu kontrolü
+      if (currentUser.diet == user.diet) {
+        score += 50;
+      }
+
+      // Mutfak tercihi benzerliği
+      List<String> commonCuisines = currentUser.cuisine
+          .where((cuisine) => user.cuisine.contains(cuisine))
+          .toList();
+      double cuisineScore = (commonCuisines.length /
+              ((currentUser.cuisine.length + user.cuisine.length) / 2)) *
+          50;
+      score += cuisineScore.round();
+
+      // Eşleşme adayını Map'e ekle
+      potentialMatches.add(MapEntry(user, score));
+    }
+
+    // Skorlara göre sıralama
+    potentialMatches.sort((a, b) => b.value.compareTo(a.value)); // Skorları azalan sırada sıralar
+
+
+    List<String> matchedUserIds = potentialMatches
+    .map((entry) => entry.key.id) // This might produce List<String?>
+    .where((id) => id != null) // Filter out null values
+    .map((id) => id!) // Convert nullable strings to non-nullable strings
+    .toList(); // Convert to List<String>
+    return matchedUserIds; //matchedUserIds;
+  }
 }
 

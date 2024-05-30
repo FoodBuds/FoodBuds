@@ -9,7 +9,7 @@ class User extends Equatable {
   final String bio;
   final String diet;
   final String genderPreference;
-  final List<String> cuisine; 
+  final List<String> cuisine;
   final String? filePath;
   final String city;
 
@@ -21,7 +21,7 @@ class User extends Equatable {
     required this.bio,
     required this.diet,
     required this.genderPreference,
-    required this.cuisine, 
+    required this.cuisine,
     this.filePath,
     required this.city,
   });
@@ -89,7 +89,8 @@ class User extends Equatable {
       bio: map['bio'],
       diet: map['diet'],
       genderPreference: map['genderPreference'],
-      cuisine: List<String>.from(map['cuisine']),
+      cuisine:
+          List<String>.from(map['cuisine']), // Ensure it's a list of strings
       filePath: map['filePath'],
       city: map['city'],
     );
@@ -104,7 +105,8 @@ class User extends Equatable {
       bio: snap['bio'],
       diet: snap['diet'],
       genderPreference: snap['genderPreference'],
-      cuisine: List<String>.from(snap['cuisine']),
+      cuisine: List<String>.from(
+          snap['cuisine']), // Convert dynamic list to List<String>
       filePath: snap['filePath'],
       city: snap['city'],
     );

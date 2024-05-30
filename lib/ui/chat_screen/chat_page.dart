@@ -1,15 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/repositories/database_repository.dart';
+import 'package:foodbuds0_1/models/models.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
 
+class _ChatPageState extends State<ChatPage> {
+  User? user1;
+  User? user2;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    try {
+      User fetchedUser1 = await DatabaseRepository()
+          .getUser('2KbQ4xZKapSbhNipuNgrTCiPHsU2')
+          .first;
+      User fetchedUser2 = await DatabaseRepository()
+          .getUser('JpALCk2ZYFgZMrJSGOyRy8YtDM52')
+          .first;
+      setState(() {
+        user1 = fetchedUser1;
+        user2 = fetchedUser2;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -23,51 +52,27 @@ class ChatPage extends StatelessWidget {
         ),
         backgroundColor: Colors.amber,
       ),
-      body: ListView(
-        children: [
-          ChatTile(
-            name: 'Silvia',
-            message: "I'm not a hoarder but I really...",
-            time: '11:30',
-            imageUrl: 'assets/silvia.png', // Add correct path to the image asset
-          ),
-          ChatTile(
-            name: 'Lucy',
-            message: 'Is your body from McDonalds',
-            time: '13:51',
-            imageUrl: 'assets/lucy1.png', // Add correct path to the image asset
-          ),
-          ChatTile(
-            name: 'Lucy',
-            message: 'Is your body from McDonalds',
-            time: '13:51',
-            imageUrl: 'assets/lucy2.png', // Add correct path to the image asset
-          ),
-          ChatTile(
-            name: 'Lucy',
-            message: 'Is your body from McDonalds',
-            time: '13:51',
-            imageUrl: 'assets/lucy3.png', // Add correct path to the image asset
-          ),
-        ],
-      ),
+      body: user1 == null || user2 == null
+          ? Center(child: CircularProgressIndicator())
+          : ListView(
+              children: [
+                ChatTile(
+                  user: user1!,
+                ),
+                ChatTile(
+                  user: user2!,
+                ),
+              ],
+            ),
     );
   }
 }
 
-
-
 class ChatTile extends StatelessWidget {
-  final String name;
-  final String message;
-  final String time;
-  final String imageUrl;
+  final User user;
 
   const ChatTile({
-    required this.name,
-    required this.message,
-    required this.time,
-    required this.imageUrl,
+    required this.user,
   });
 
   @override
@@ -85,22 +90,26 @@ class ChatTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundImage: AssetImage(imageUrl),
+          backgroundImage: NetworkImage(user.filePath as String),
         ),
         title: Text(
-          name,
+          user.name,
           style: const TextStyle(color: Colors.black),
         ),
         subtitle: Text(
-          message,
+          "message",
           style: const TextStyle(color: Colors.grey),
         ),
-        trailing: Text(time),
+        trailing: Text("time"),
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ChatDetailPage(name: name, imageUrl: imageUrl),
+              builder: (context) => ChatDetailPage(
+                name: user.name,
+                imageUrl: user.filePath as String,
+                receiverId: user.id as String,
+              ),
             ),
           );
         },

@@ -1,3 +1,4 @@
+import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/database_repository.dart';
@@ -61,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
+        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
         onTap: _onItemTapped,
         backgroundColor: Colors.white,
         type: BottomNavigationBarType.fixed,
@@ -367,7 +368,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               radius: constraints.maxWidth * 0.1, // Increase circle avatar size
                               backgroundColor: Colors.red,
                               child: IconButton(
-                                icon: const Icon(Icons.clear, color: Colors.white),
+                                icon: const Icon(Icons.clear, color: Colors.white, size: 40),
                                 onPressed: _swipeLeft,
                               ),
                             ),
@@ -375,7 +376,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               radius: constraints.maxWidth * 0.12, // Increase circle avatar size
                               backgroundColor: Colors.blue,
                               child: IconButton(
-                                icon: const Icon(Icons.favorite, color: Colors.white),
+                                icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
                                 onPressed: _showSuperLikeMessage,
                               ),
                             ),
@@ -383,7 +384,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               radius: constraints.maxWidth * 0.1, // Increase circle avatar size
                               backgroundColor: Colors.green,
                               child: IconButton(
-                                icon: const Icon(Icons.check, color: Colors.white),
+                                icon: const Icon(Icons.check, color: Colors.white, size: 40),
                                 onPressed: _swipeRight,
                               ),
                             ),

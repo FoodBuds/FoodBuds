@@ -23,10 +23,10 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> _loadUsers() async {
     try {
       User fetchedUser1 = await DatabaseRepository()
-          .getUser('2KbQ4xZKapSbhNipuNgrTCiPHsU2')
+          .getUser('eAcmLWCETscfXCx2Dy3l9CdklLw2')
           .first;
       User fetchedUser2 = await DatabaseRepository()
-          .getUser('JpALCk2ZYFgZMrJSGOyRy8YtDM52')
+          .getUser('12sgsRNKWlgCZ6hxnqZahqi9Mui1')
           .first;
       setState(() {
         user1 = fetchedUser1;

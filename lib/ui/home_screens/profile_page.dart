@@ -306,50 +306,34 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+    final List<String> cities = [
+    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 
+    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 
+    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 
+    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 
+    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 
+    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 
+    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir', 
+    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 
+    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 
+    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon', 
+    'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+  ];
+
   void _changeCity() async {
     String? selectedCity = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
         return SimpleDialog(
-          title: const Text('City'),
-          children: <Widget>[
-            SimpleDialogOption(
+          title: const Text('Şehir Seçin'),
+          children: cities.map((city) {
+            return SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Adana');
+                Navigator.pop(context, city);
               },
-              child: const Text('Adana'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, 'Adıyaman');
-              },
-              child: const Text('Adıyaman'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, 'Afyonkarahisar');
-              },
-              child: const Text('Afyonkarahisar'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, 'Ağrı');
-              },
-              child: const Text('Ağrı'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, 'Aksaray');
-              },
-              child: const Text('Aksaray'),
-            ),
-            SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, 'Istanbul');
-              },
-              child: const Text('Istanbul'),
-            ),
-          ],
+              child: Text(city),
+            );
+          }).toList(),
         );
       },
     );
@@ -564,8 +548,9 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.amber,
-        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        title: const Text('     Profile', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _isLoading

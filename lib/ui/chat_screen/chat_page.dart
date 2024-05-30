@@ -41,14 +41,10 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Chat',
-          style: TextStyle(
-            color: Colors.white,
-            decoration: TextDecoration.underline,
-            decorationThickness: 2.0,
-            decorationColor: Colors.white,
-          ),
+          '    Chat',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)
         ),
         backgroundColor: Colors.amber,
       ),

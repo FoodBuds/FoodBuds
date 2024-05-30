@@ -27,14 +27,9 @@ class _LikePageState extends State<LikePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: const Text('Likes', style: TextStyle(color: Colors.black)),
+        title: const Text('    Likes', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
         elevation: 0, // Remove the shadow
       ),
       body: Stack(

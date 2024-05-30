@@ -199,13 +199,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers(); 
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _fetchUsers(); // Re-fetch users based on the applied filter
+                _fetchUsers();
               },
               child: const Text('Apply'),
             ),
@@ -231,12 +232,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers();
               },
               child: const Text('Submit'),
             ),
@@ -279,9 +282,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Home',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          '    Home',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
         ),
         backgroundColor: Colors.amber,
         actions: [
@@ -357,7 +361,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 20.0), // Increase the padding to move buttons higher
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             CircleAvatar(
                               radius: constraints.maxWidth * 0.1, // Increase circle avatar size
@@ -368,7 +372,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               ),
                             ),
                             CircleAvatar(
-                              radius: constraints.maxWidth * 0.1, // Increase circle avatar size
+                              radius: constraints.maxWidth * 0.12, // Increase circle avatar size
                               backgroundColor: Colors.blue,
                               child: IconButton(
                                 icon: const Icon(Icons.favorite, color: Colors.white),

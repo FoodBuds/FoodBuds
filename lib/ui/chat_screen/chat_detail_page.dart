@@ -1,14 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/repositories/repositories.dart';
+import 'package:foodbuds0_1/models/models.dart';
 
-class ChatDetailPage extends StatelessWidget {
+class ChatDetailPage extends StatefulWidget {
   final String name;
   final String imageUrl;
+  final String receiverId;
 
   const ChatDetailPage({
     required this.name,
     required this.imageUrl,
+    required this.receiverId,
   });
+
+  @override
+  _ChatDetailPageState createState() => _ChatDetailPageState();
+}
+
+class _ChatDetailPageState extends State<ChatDetailPage> {
+  final TextEditingController _controller = TextEditingController();
+  String? senderId;
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+
+  void init() async {
+    try {
+      senderId = await AuthenticationRepository().getUserId() as String;
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _handleSend() async {
+    if (_controller.text.isNotEmpty) {
+      String message = _controller.text;
+      _controller.clear(); // Clear the text field
+      await ChatRepository().sendMessage(widget.receiverId, message);
+    }
+  }
+
+  Stream<QuerySnapshot> _messageStream() {
+    try {
+      return ChatRepository().getMessages(widget.receiverId)
+          as Stream<QuerySnapshot>;
+    } catch (err) {
+      print(err);
+      return Stream<QuerySnapshot>.empty();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +67,11 @@ class ChatDetailPage extends StatelessWidget {
         title: Row(
           children: [
             CircleAvatar(
-              backgroundImage: AssetImage(imageUrl),
+              backgroundImage: NetworkImage(widget.imageUrl),
             ),
             const SizedBox(width: 8),
             Text(
-              name,
+              widget.name,
               style: const TextStyle(color: Colors.black),
             ),
           ],
@@ -45,25 +90,48 @@ class ChatDetailPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              children: [
-                MessageBubble(
-                  isMe: false,
-                  text: "Can I follow you? Cause my mom told me to follow my dreams...",
-                  time: "12:05",
-                  isHighlighted: true,
-                ),
-                MessageBubble(
-                  isMe: true,
-                  text: "I'm not a hoarder but I really Lorem ips",
-                  time: "12:06",
-                ),
-              ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _messageStream(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text("No messages yet."));
+                }
+
+                var messages = snapshot.data!.docs.map((doc) {
+                  return Message(
+                    senderId: doc['senderId'],
+                    senderName: doc['senderName'],
+                    receiverId: doc['receiverId'],
+                    timestamp: doc['timestamp'],
+                    message: doc['message'],
+                  );
+                }).toList();
+
+                return ListView.builder(
+                  reverse: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    var message = messages[index];
+                    bool isMe = message.senderId == senderId;
+                    return MessageBubble(
+                      isMe: isMe,
+                      text: message.message,
+                      time: message.timestamp.toDate().toString(),
+                    );
+                  },
+                );
+              },
             ),
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: ChatInputField(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+            child: ChatInputField(
+              controller: _controller,
+              onSend: _handleSend,
+            ),
           ),
         ],
       ),
@@ -92,7 +160,7 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: isMe ? Colors.white : Colors.blue,  // Change shade for better visibility
+          color: isMe ? Colors.white : Colors.blue,
           borderRadius: BorderRadius.circular(15.0),
           border: isMe ? Border.all(color: Colors.grey[300]!, width: 1) : null,
         ),
@@ -121,7 +189,13 @@ class MessageBubble extends StatelessWidget {
 }
 
 class ChatInputField extends StatelessWidget {
-  const ChatInputField({super.key});
+  final TextEditingController controller;
+  final VoidCallback onSend;
+
+  const ChatInputField({
+    required this.controller,
+    required this.onSend,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -129,6 +203,8 @@ class ChatInputField extends StatelessWidget {
       children: [
         Expanded(
           child: TextField(
+            style: TextStyle(color: Colors.black),
+            controller: controller,
             decoration: InputDecoration(
               hintText: 'Type Something...',
               hintStyle: TextStyle(color: Colors.black),
@@ -142,9 +218,7 @@ class ChatInputField extends StatelessWidget {
         ),
         IconButton(
           icon: const Icon(Icons.send, color: Colors.black),
-          onPressed: () {
-
-          },
+          onPressed: onSend,
         ),
       ],
     );

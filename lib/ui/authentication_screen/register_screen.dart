@@ -15,16 +15,22 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   String? errorMessage = " ";
 
   bool isPasswordCompliant(String password, [int minLength = 8]) {
-      if (password.isEmpty) return false;
-      bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-      bool hasLowercase = password.contains(RegExp(r'[a-z]'));
-      bool hasDigits = password.contains(RegExp(r'[0-9]'));
-      bool hasSpecialCharacters = password.contains(RegExp(r'[!@#$%^&*()_+{}|:"<>?,./;\\\[\]`~=]'));
-      return password.length >= minLength && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
+    if (password.isEmpty) return false;
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigits = password.contains(RegExp(r'[0-9]'));
+    bool hasSpecialCharacters =
+        password.contains(RegExp(r'[!@#$%^&*()_+{}|:"<>?,./;\\\[\]`~=]'));
+    return password.length >= minLength &&
+        hasUppercase &&
+        hasLowercase &&
+        hasDigits &&
+        hasSpecialCharacters;
   }
 
   Future<void> createUserWithEmailAndPassword() async {
@@ -37,25 +43,24 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (!isPasswordCompliant(_passwordController.text)) {
       setState(() {
-        errorMessage = "Password must be at least 8 characters long and include uppercase, lowercase letters, numbers, and special characters.";
+        errorMessage =
+            "Password must be at least 8 characters long and include uppercase, lowercase letters, numbers, and special characters.";
       });
       return;
     }
     try {
       await AuthenticationRepository().createUserWithEmailandPassword(
-        email: _emailController.text,
-        password: _passwordController.text
-      );
+          email: _emailController.text, password: _passwordController.text);
       model.User user = model.User(
-        id: AuthenticationRepository().currentUser!.uid,
-        name: '',
-        surname: '',
-        bio: '',
-        gender: '',
-        genderPreference: '',
-        diet: '',
-        cuisine: [],
-      );
+          id: AuthenticationRepository().currentUser!.uid,
+          name: '',
+          surname: '',
+          bio: '',
+          gender: '',
+          genderPreference: '',
+          diet: '',
+          cuisine: [],
+          city: '');
       DatabaseRepository().createUser(user);
       Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => MailVerificationPage(),

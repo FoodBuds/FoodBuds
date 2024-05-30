@@ -1,5 +1,4 @@
 import "package:firebase_auth/firebase_auth.dart";
-import 'package:foodbuds0_1/models/user_model.dart' as model;
 
 class AuthenticationRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;

@@ -300,6 +300,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           : LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 model.User currentUser = _users.first;
+                String? filePath = currentUser.filePath as String;
                 return Container(
                   color: Colors.amber,
                   child: Column(
@@ -316,8 +317,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               SizedBox(height: constraints.maxHeight * 0.1),
-                              Image.asset(
-                                'images/user.png', // User profile image
+                              Image.network(
+                                filePath, // User profile image
                                 fit: BoxFit.cover,
                                 width: constraints.maxWidth * 0.9,
                                 height: constraints.maxHeight * 0.55,

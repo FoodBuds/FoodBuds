@@ -118,9 +118,12 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               GestureDetector(
-                onTap: () => {
-                  _onSubscriptionSelected(0),
-                  currentPlan = 'Premium - Diamond'
+                onTap: () {
+                  _onSubscriptionSelected(0);
+                  setState(() {
+                    currentPlan = 'Premium - Diamond';
+                  });
+                  _validateAndSave();
                 },
                 child: Column(
                   children: [
@@ -129,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         color: _selectedSubscriptionIndex == 0
                             ? Colors.blue
-                            : Colors.white,
+                            : Colors.black,
                         fontWeight: _selectedSubscriptionIndex == 0
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -140,9 +143,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () => {
-                  _onSubscriptionSelected(1),
-                  currentPlan = 'Premium - Gold'
+                onTap: () {
+                  _onSubscriptionSelected(1);
+                  setState(() {
+                    currentPlan = 'Premium - Gold';
+                  });
+                  _validateAndSave();
                 },
                 child: Column(
                   children: [
@@ -151,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         color: _selectedSubscriptionIndex == 1
                             ? Colors.blue
-                            : Colors.white,
+                            : Colors.black,
                         fontWeight: _selectedSubscriptionIndex == 1
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -162,9 +168,12 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () => {
-                  _onSubscriptionSelected(2),
-                  currentPlan = 'Premium - Silver'
+                onTap: () {
+                  _onSubscriptionSelected(2);
+                  setState(() {
+                    currentPlan = 'Premium - Silver';
+                  });
+                  _validateAndSave();
                 },
                 child: Column(
                   children: [
@@ -173,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         color: _selectedSubscriptionIndex == 2
                             ? Colors.blue
-                            : Colors.white,
+                            : Colors.black,
                         fontWeight: _selectedSubscriptionIndex == 2
                             ? FontWeight.bold
                             : FontWeight.normal,
@@ -243,6 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         showMe = selectedOption;
       });
+      _validateAndSave();
     }
   }
 
@@ -292,6 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         diet = selectedDiet;
       });
+      _validateAndSave();
     }
   }
 
@@ -347,6 +358,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         city = selectedCity;
       });
+      _validateAndSave();
     }
   }
 
@@ -498,6 +510,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         cuisine = selectedCuisines;
       });
+      _validateAndSave();
     }
   }
 
@@ -613,18 +626,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   )
                                 : ProfileDisplayField(
                                     label: 'Name', value: name),
-                            isEditing
-                                ? ProfileEditableField(
-                                    label: 'Email',
-                                    value: _emailController.text,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _emailController.text = value;
-                                      });
-                                    },
-                                  )
-                                : ProfileDisplayField(
-                                    label: 'Email', value: email),
+                            ProfileDisplayField(
+                                label: 'Email', value: email),
                             isEditing
                                 ? ProfileEditableField(
                                     label: 'Bio',

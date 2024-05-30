@@ -20,8 +20,8 @@ class ProfileDetail extends StatelessWidget {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6, // Profile image covers most of the screen
               width: double.infinity,
-              child: Image.asset(
-                'images/user.png',
+              child: Image.network(
+                user.filePath as String,
                 fit: BoxFit.cover,
               ),
             ),

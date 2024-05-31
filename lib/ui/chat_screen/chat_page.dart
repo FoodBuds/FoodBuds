@@ -46,11 +46,22 @@ class _ChatPageState extends State<ChatPage> {
           '    Chat',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.white,
       ),
       body: user1 == null || user2 == null
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
+          ? Container(
+            color: Colors.white,
+              child: Center(
+                child: Text('There is no user to chat with', 
+                style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), 
+                fontSize: 24), 
+                textAlign: TextAlign.center
+              )
+              )
+            )
+          : Container(
+            color: Colors.white,
+            child: ListView(
               children: [
                 ChatTile(
                   user: user1!,
@@ -60,6 +71,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             ),
+          )
     );
   }
 }
@@ -77,7 +89,7 @@ class ChatTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.amber,
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
           color: Colors.grey[300]!,

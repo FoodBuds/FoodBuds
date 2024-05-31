@@ -10,7 +10,6 @@ class ProfileDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user.name} ${user.surname}'),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(

@@ -1,4 +1,4 @@
-import 'package:sliding_clipped_nav_bar/sliding_clipped_nav_bar.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/database_repository.dart';
@@ -41,32 +41,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ProfilePage(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Likes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: const Color.fromARGB(255, 0, 0, 0),
-        onTap: _onItemTapped,
+      bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        iconSize: 30,
+        buttonBackgroundColor: Colors.amber,
+        color: Colors.amber,
+        height: 60,
+        items: const <Widget>[
+          Icon(Icons.home, size: 30, color: Colors.black),
+          Icon(Icons.chat, size: 30, color: Colors.black),
+          Icon(Icons.favorite, size: 30, color: Colors.black),
+          Icon(Icons.person, size: 30, color: Colors.black),
+        ],
+        onTap: _onItemTapped,
+        index: _selectedIndex,
       ),
     );
   }
@@ -288,7 +275,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           '    Home',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.report_problem, color: Colors.black),
@@ -301,13 +288,21 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         ],
       ),
       body: _users.isEmpty
-          ? const Center(child: Text('No more users'))
+          ? Container(
+              color: Colors.white, // Change the background color here
+              child: const Center(
+                child: Text(
+                  'No more users',
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 24), // Adjust text color and size as needed
+                ),
+              ),
+            )
           : LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 model.User currentUser = _users.first;
                 String? filePath = currentUser.filePath as String;
                 return Container(
-                  color: Colors.amber,
+                  color: Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -321,19 +316,41 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              SizedBox(height: constraints.maxHeight * 0.1),
-                              Image.network(
-                                filePath, // User profile image
-                                fit: BoxFit.cover,
-                                width: constraints.maxWidth * 0.9,
-                                height: constraints.maxHeight * 0.55,
+                              SizedBox(height: constraints.maxHeight * 0.085),
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 5,
+                                      blurRadius: 10,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  child: Image.network(
+                                    filePath, // User profile image
+                                    fit: BoxFit.cover,
+                                    width: constraints.maxWidth,
+                                    height: constraints.maxHeight * 0.60,
+                                  ),
+                                ),
                               ),
                               Container(
+                                width: constraints.maxWidth,
                                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                margin: const EdgeInsets.only(top: 20),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.amber,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -341,15 +358,15 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                       '${currentUser.name} ${currentUser.surname}',
                                       style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
                                     Text(
-                                      currentUser.city,
+                                      'Diet:  ${currentUser.diet}',
                                       style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 16,
+                                        fontSize: 20,
                                       ),
                                     ),
                                   ],

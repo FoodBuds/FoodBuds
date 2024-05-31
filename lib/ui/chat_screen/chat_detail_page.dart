@@ -87,54 +87,57 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _messageStream(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text("No messages yet."));
-                }
+      body: Container(
+        color: Colors.white,
+        child :Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: _messageStream(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                    return Center(child: Text("No messages yet."));
+                  }
 
-                var messages = snapshot.data!.docs.map((doc) {
-                  return Message(
-                    senderId: doc['senderId'],
-                    senderName: doc['senderName'],
-                    receiverId: doc['receiverId'],
-                    timestamp: doc['timestamp'],
-                    message: doc['message'],
-                  );
-                }).toList();
-
-                return ListView.builder(
-                  reverse: true,
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    var message = messages[index];
-                    bool isMe = message.senderId == senderId;
-                    return MessageBubble(
-                      isMe: isMe,
-                      text: message.message,
-                      time: message.timestamp.toDate().toString(),
+                  var messages = snapshot.data!.docs.map((doc) {
+                    return Message(
+                      senderId: doc['senderId'],
+                      senderName: doc['senderName'],
+                      receiverId: doc['receiverId'],
+                      timestamp: doc['timestamp'],
+                      message: doc['message'],
                     );
-                  },
-                );
-              },
+                  }).toList();
+
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      var message = messages[index];
+                      bool isMe = message.senderId == senderId;
+                      return MessageBubble(
+                        isMe: isMe,
+                        text: message.message,
+                        time: message.timestamp.toDate().toString(),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-            child: ChatInputField(
-              controller: _controller,
-              onSend: _handleSend,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: ChatInputField(
+                controller: _controller,
+                onSend: _handleSend,
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 }
@@ -160,9 +163,8 @@ class MessageBubble extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
         padding: const EdgeInsets.all(12.0),
         decoration: BoxDecoration(
-          color: isMe ? Colors.white : Colors.blue,
+          color: isMe ? Colors.amber : Colors.grey[200],
           borderRadius: BorderRadius.circular(15.0),
-          border: isMe ? Border.all(color: Colors.grey[300]!, width: 1) : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,12 +172,12 @@ class MessageBubble extends StatelessWidget {
             Text(
               text,
               style: TextStyle(
-                color: isMe ? Colors.black : Colors.white,
+                color: isMe ? Colors.white : Colors.black,
               ),
             ),
             const SizedBox(height: 5.0),
             Text(
-              time,
+              time.split(' ')[1].substring(0, 5),
               style: const TextStyle(
                 fontSize: 12.0,
                 color: Colors.grey,
@@ -213,12 +215,22 @@ class ChatInputField extends StatelessWidget {
               ),
               fillColor: Colors.grey[200],
               filled: true,
+              contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
             ),
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.send, color: Colors.black),
-          onPressed: onSend,
+        Container(
+          height: 60,
+          width: 70,
+          margin: EdgeInsets.symmetric(horizontal: 10.0),
+          decoration: BoxDecoration(
+            color: Colors.amber, 
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+          child: IconButton(
+            icon: const Icon(Icons.send, color: Colors.black),
+            onPressed: onSend,
+          ),
         ),
       ],
     );

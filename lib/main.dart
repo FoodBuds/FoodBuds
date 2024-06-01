@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.amber,
       ),
       debugShowCheckedModeBanner: false,
-      home: ProfilePage(),
+      home: FirstScreen(),
     );
   }
 }

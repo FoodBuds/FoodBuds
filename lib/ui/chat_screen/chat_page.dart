@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/repositories/chat_repository.dart';
 import 'package:foodbuds0_1/repositories/database_repository.dart';
+import 'package:foodbuds0_1/repositories/authentication_repository.dart';
+import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/models/models.dart';
 
 class ChatPage extends StatefulWidget {
@@ -11,30 +13,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  User? user1;
-  User? user2;
+  Stream<List<ChatRoom>>? chatRoomsStream;
 
   @override
   void initState() {
     super.initState();
-    _loadUsers();
+    _loadChatRooms();
   }
 
-  Future<void> _loadUsers() async {
-    try {
-      User fetchedUser1 = await DatabaseRepository()
-          .getUser('2KbQ4xZKapSbhNipuNgrTCiPHsU2')
-          .first;
-      User fetchedUser2 = await DatabaseRepository()
-          .getUser('JpALCk2ZYFgZMrJSGOyRy8YtDM52')
-          .first;
-      setState(() {
-        user1 = fetchedUser1;
-        user2 = fetchedUser2;
-      });
-    } catch (e) {
-      print(e);
-    }
+  void _loadChatRooms() {
+    chatRoomsStream = ChatRepository().getChatRooms();
   }
 
   @override
@@ -52,28 +40,62 @@ class _ChatPageState extends State<ChatPage> {
         ),
         backgroundColor: Colors.amber,
       ),
-      body: user1 == null || user2 == null
-          ? Center(child: CircularProgressIndicator())
-          : ListView(
-              children: [
-                ChatTile(
-                  user: user1!,
-                ),
-                ChatTile(
-                  user: user2!,
-                ),
-              ],
-            ),
+      body: StreamBuilder<List<ChatRoom>>(
+        stream: chatRoomsStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            print("object_huso");
+            return Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            print('Error: ${snapshot.error}');
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No chat rooms available'));
+          }
+
+          List<ChatRoom> chatRooms = snapshot.data!;
+          return ListView.builder(
+            itemCount: chatRooms.length,
+            itemBuilder: (context, index) {
+              return FutureBuilder<User>(
+                future: _getUserFromChatRoom(chatRooms[index]),
+                builder: (context, userSnapshot) {
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  if (userSnapshot.hasError) {
+                    return Center(child: Text('Error: ${userSnapshot.error}'));
+                  }
+                  if (!userSnapshot.hasData) {
+                    return Center(child: Text('User data not found'));
+                  }
+
+                  User user = userSnapshot.data!;
+                  return ChatTile(user: user);
+                },
+              );
+            },
+          );
+        },
+      ),
     );
+  }
+
+  Future<User> _getUserFromChatRoom(ChatRoom chatRoom) async {
+    String currentUserId =
+        await AuthenticationRepository().getUserId() as String;
+    String otherUserId =
+        chatRoom.userIds.firstWhere((id) => id != currentUserId);
+    return await DatabaseRepository().getUserById(otherUserId) as User;
   }
 }
 
 class ChatTile extends StatelessWidget {
   final User user;
 
-  const ChatTile({
-    required this.user,
-  });
+  const ChatTile({required this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -96,11 +118,11 @@ class ChatTile extends StatelessWidget {
           user.name,
           style: const TextStyle(color: Colors.black),
         ),
-        subtitle: Text(
+        subtitle: const Text(
           "message",
-          style: const TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.grey),
         ),
-        trailing: Text("time"),
+        trailing: const Text("time"),
         onTap: () {
           Navigator.push(
             context,

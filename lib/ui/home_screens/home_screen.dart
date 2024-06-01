@@ -316,22 +316,16 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              SizedBox(height: constraints.maxHeight * 0.085),
+                              SizedBox(height: constraints.maxHeight * 0.035),
                               Container(
+                                padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.5),
-                                      spreadRadius: 5,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
                                 ),
                                 child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
                                   child: Image.network(
-                                    filePath, // User profile image
+                                    filePath, 
                                     fit: BoxFit.cover,
                                     width: constraints.maxWidth,
                                     height: constraints.maxHeight * 0.60,
@@ -340,8 +334,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               ),
                               Container(
                                 width: constraints.maxWidth,
+                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                                 decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
                                   color: Colors.amber,
                                   boxShadow: [
                                     BoxShadow(

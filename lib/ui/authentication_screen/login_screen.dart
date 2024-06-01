@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/widgets.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 import 'package:foodbuds0_1/repositories/database_repository.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
@@ -80,12 +81,19 @@ class _LoginPageState extends State<LoginPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(
-                        'LOGIN',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                      GestureDetector(
+                        onTap: () {
+                          _emailController.text = "gtarikemre10@gmail.com";
+                          _passwordController.text = "takoemre10";
+                          signInWithEmailAndPassword();
+                        },
+                        child: Text(
+                          'LOGIN',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                       SizedBox(height: 20),

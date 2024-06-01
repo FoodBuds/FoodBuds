@@ -1,5 +1,6 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:foodbuds0_1/repositories/chat_repository.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/database_repository.dart';
 import 'home_screens.dart';
@@ -98,8 +99,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     String? likerUserId = await AuthenticationRepository().getUserId();
     if (likerUserId != null) {
       await _databaseRepository.likeUser(likerUserId, likedUserId);
-      bool isMatch = await _databaseRepository.checkForMatch(likerUserId, likedUserId);
+      bool isMatch =
+          await _databaseRepository.checkForMatch(likerUserId, likedUserId);
       if (isMatch) {
+        ChatRepository().createMessageRoom(likedUserId);
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => MatchPage(),
         ));
@@ -310,7 +313,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         child: GestureDetector(
                           onTap: () {
                             Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ProfileDetail(user: currentUser),
+                              builder: (context) =>
+                                  ProfileDetail(user: currentUser),
                             ));
                           },
                           child: Column(
@@ -373,12 +377,15 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20.0), // Increase the padding to move buttons higher
+                        padding: const EdgeInsets.symmetric(
+                            vertical:
+                                20.0), // Increase the padding to move buttons higher
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             CircleAvatar(
-                              radius: constraints.maxWidth * 0.1, // Increase circle avatar size
+                              radius: constraints.maxWidth *
+                                  0.1, // Increase circle avatar size
                               backgroundColor: Colors.red,
                               child: IconButton(
                                 icon: const Icon(Icons.clear, color: Colors.white, size: 40),
@@ -394,7 +401,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               ),
                             ),
                             CircleAvatar(
-                              radius: constraints.maxWidth * 0.1, // Increase circle avatar size
+                              radius: constraints.maxWidth *
+                                  0.1, // Increase circle avatar size
                               backgroundColor: Colors.green,
                               child: IconButton(
                                 icon: const Icon(Icons.check, color: Colors.white, size: 40),

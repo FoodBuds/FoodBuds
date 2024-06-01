@@ -1,3 +1,4 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/repositories/chat_repository.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
@@ -41,32 +42,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ProfilePage(),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Likes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber,
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
+      bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.white,
-        type: BottomNavigationBarType.fixed,
-        iconSize: 30,
+        buttonBackgroundColor: Colors.amber,
+        color: Colors.amber,
+        height: 60,
+        items: const <Widget>[
+          Icon(Icons.home, size: 30, color: Colors.black),
+          Icon(Icons.chat, size: 30, color: Colors.black),
+          Icon(Icons.favorite, size: 30, color: Colors.black),
+          Icon(Icons.person, size: 30, color: Colors.black),
+        ],
+        onTap: _onItemTapped,
+        index: _selectedIndex,
       ),
     );
   }
@@ -202,13 +190,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers(); 
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _fetchUsers(); // Re-fetch users based on the applied filter
+                _fetchUsers();
               },
               child: const Text('Apply'),
             ),
@@ -234,12 +223,14 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers();
               },
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                _fetchUsers();
               },
               child: const Text('Submit'),
             ),
@@ -282,11 +273,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Home',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          '    Home',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.white,
         actions: [
           IconButton(
             icon: const Icon(Icons.report_problem, color: Colors.black),
@@ -299,12 +291,21 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         ],
       ),
       body: _users.isEmpty
-          ? const Center(child: Text('No more users'))
+          ? Container(
+              color: Colors.white, // Change the background color here
+              child: const Center(
+                child: Text(
+                  'No more users',
+                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 24), // Adjust text color and size as needed
+                ),
+              ),
+            )
           : LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 model.User currentUser = _users.first;
+                String? filePath = currentUser.filePath as String;
                 return Container(
-                  color: Colors.amber,
+                  color: Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -319,20 +320,37 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              SizedBox(height: constraints.maxHeight * 0.1),
-                              Image.asset(
-                                'images/user.png', // User profile image
-                                fit: BoxFit.cover,
-                                width: constraints.maxWidth * 0.9,
-                                height: constraints.maxHeight * 0.55,
+                              SizedBox(height: constraints.maxHeight * 0.035),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    filePath, 
+                                    fit: BoxFit.cover,
+                                    width: constraints.maxWidth,
+                                    height: constraints.maxHeight * 0.60,
+                                  ),
+                                ),
                               ),
                               Container(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                margin: const EdgeInsets.only(top: 20),
+                                width: constraints.maxWidth,
+                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.amber,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
                                 ),
                                 child: Column(
                                   children: [
@@ -340,15 +358,15 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                       '${currentUser.name} ${currentUser.surname}',
                                       style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold
                                       ),
                                     ),
                                     Text(
-                                      currentUser.city,
+                                      'Diet:  ${currentUser.diet}',
                                       style: const TextStyle(
                                         color: Colors.black,
-                                        fontSize: 16,
+                                        fontSize: 20,
                                       ),
                                     ),
                                   ],
@@ -363,25 +381,22 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                             vertical:
                                 20.0), // Increase the padding to move buttons higher
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
                             CircleAvatar(
                               radius: constraints.maxWidth *
                                   0.1, // Increase circle avatar size
                               backgroundColor: Colors.red,
                               child: IconButton(
-                                icon: const Icon(Icons.clear,
-                                    color: Colors.white),
+                                icon: const Icon(Icons.clear, color: Colors.white, size: 40),
                                 onPressed: _swipeLeft,
                               ),
                             ),
                             CircleAvatar(
-                              radius: constraints.maxWidth *
-                                  0.1, // Increase circle avatar size
+                              radius: constraints.maxWidth * 0.12, // Increase circle avatar size
                               backgroundColor: Colors.blue,
                               child: IconButton(
-                                icon: const Icon(Icons.favorite,
-                                    color: Colors.white),
+                                icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
                                 onPressed: _showSuperLikeMessage,
                               ),
                             ),
@@ -390,8 +405,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                   0.1, // Increase circle avatar size
                               backgroundColor: Colors.green,
                               child: IconButton(
-                                icon: const Icon(Icons.check,
-                                    color: Colors.white),
+                                icon: const Icon(Icons.check, color: Colors.white, size: 40),
                                 onPressed: _swipeRight,
                               ),
                             ),

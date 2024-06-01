@@ -21,6 +21,7 @@ class _ChatPageState extends State<ChatPage> {
     _loadChatRooms();
   }
 
+
   void _loadChatRooms() {
     chatRoomsStream = ChatRepository().getChatRooms();
   }
@@ -29,16 +30,12 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Chat',
-          style: TextStyle(
-            color: Colors.white,
-            decoration: TextDecoration.underline,
-            decorationThickness: 2.0,
-            decorationColor: Colors.white,
-          ),
+          '    Chat',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)
         ),
-        backgroundColor: Colors.amber,
+        backgroundColor: Colors.white,
       ),
       body: StreamBuilder<List<ChatRoom>>(
         stream: chatRoomsStream,
@@ -103,7 +100,7 @@ class ChatTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
       padding: const EdgeInsets.all(12.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.amber,
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
           color: Colors.grey[300]!,

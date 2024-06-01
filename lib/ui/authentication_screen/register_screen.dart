@@ -15,33 +15,32 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   String? errorMessage = " ";
 
   bool isPasswordCompliant(String password, [int minLength = 8]) {
-      if (password.isEmpty) return false;
-      bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
-      bool hasLowercase = password.contains(RegExp(r'[a-z]'));
-      bool hasDigits = password.contains(RegExp(r'[0-9]'));
-      return password.length >= minLength && (hasUppercase || hasLowercase) && hasDigits;
+    if (password.isEmpty) return false;
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigits = password.contains(RegExp(r'[0-9]'));
+    return password.length >= minLength && (hasUppercase || hasLowercase) && hasDigits;
   }
 
   Future<void> createUserWithEmailAndPassword() async {
     if (_passwordController.text != _confirmPasswordController.text) {
-      setState(() {
-        errorMessage = "Passwords do not match.";
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Passwords do not match.")),
+      );
       return;
     }
 
     if (!isPasswordCompliant(_passwordController.text)) {
-      setState(() {
-        errorMessage =
-            "Password must be at least 8 characters long and include uppercase, lowercase letters, numbers, and special characters.";
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password must be at least 8 characters long and include uppercase, lowercase letters, and numbers.")),
+      );
       return;
     }
+
     try {
       await AuthenticationRepository().createUserWithEmailandPassword(
           email: _emailController.text, password: _passwordController.text);
@@ -61,9 +60,9 @@ class _RegisterPageState extends State<RegisterPage> {
         builder: (context) => MailVerificationPage(),
       ));
     } on FirebaseAuthException catch (e) {
-      setState(() {
-        errorMessage = e.message;
-      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? 'An error occurred')),
+      );
     }
   }
 
@@ -131,11 +130,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 style: TextStyle(fontSize: 18, color: Colors.black),
-              ),
-              SizedBox(height: 10),
-              Text(
-                errorMessage == " " ? " " : "$errorMessage",
-                style: TextStyle(color: Colors.red),
               ),
               SizedBox(height: 30),
               ElevatedButton(

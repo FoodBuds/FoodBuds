@@ -19,19 +19,18 @@ class _StartCreateState extends State<StartCreate> {
   String _gender = '';
   String _city = '';
 
-  final List<String> _cities = [
-    'Adana', 'Adiyaman', 'Afyonkarahisar', 'Ağri', 'Amasya', 'Ankara', 
-    'Antalya', 'Artvin', 'Aydin', 'Balikesir', 'Bilecik', 'Bingöl', 'Bitlis', 
-    'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 'Çankiri', 'Çorum', 'Denizli', 
-    'Diyarbakir', 'Edirne', 'Elaziğ', 'Erzincan', 'Erzurum', 'Eskişehir', 
-    'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 'Hatay', 'Isparta', 
-    'Mersin', 'İstanbul', 'İzmir', 'Kars', 'Kastamonu', 'Kayseri', 'Kirklareli', 
-    'Kirşehir', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Kahramanmaraş', 
-    'Mardin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Rize', 'Sakarya', 
-    'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 
-    'Şanliurfa', 'Uşak', 'Van', 'Yozgat', 'Zonguldak', 'Aksaray', 'Bayburt', 
-    'Karaman', 'Kirikkale', 'Batman', 'Şirnak', 'Bartin', 'Ardahan', 'Iğdir', 
-    'Yalova', 'Karabük', 'Kilis', 'Osmaniye', 'Düzce'
+    final List<String> _cities = [
+    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 
+    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 
+    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 
+    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 
+    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 
+    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 
+    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir', 
+    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 
+    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 
+    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon', 
+    'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
   ];
 
   @override

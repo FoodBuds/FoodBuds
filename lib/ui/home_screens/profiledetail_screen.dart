@@ -17,7 +17,8 @@ class ProfileDetail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6, // Profile image covers most of the screen
+              height: MediaQuery.of(context).size.height *
+                  0.6, // Profile image covers most of the screen
               width: double.infinity,
               child: Image.network(
                 user.filePath as String,
@@ -62,9 +63,14 @@ class ProfileDetail extends StatelessWidget {
                     const Divider(),
                     _buildInfoText('Diet: ${user.diet}'),
                     const Divider(),
-                    _buildInfoText('Gender Preference: ${user.genderPreference}'),
+                    _buildInfoText(
+                        'Gender Preference: ${user.genderPreference}'),
                     const Divider(),
-                    _buildInfoText('Favorite Cuisines: ${user.cuisine.join(', ')}'),
+                    _buildInfoText(
+                        'Favorite Cuisines: ${user.cuisine.join(', ')}'),
+                    const Divider(),
+                    _buildInfoText(
+                        'Birthdate: ${user.birthDate.toDate()}'), // Display as timestamp
                   ],
                 ),
               ),

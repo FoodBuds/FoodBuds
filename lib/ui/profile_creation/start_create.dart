@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Add this import
 import 'package:foodbuds0_1/ui/profile_creation/add_photo.dart';
 import 'profile_creation.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
@@ -18,19 +19,90 @@ class _StartCreateState extends State<StartCreate> {
   String _aboutme = '';
   String _gender = '';
   String _city = '';
+  Timestamp? _birthdate;
 
-    final List<String> _cities = [
-    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 
-    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 
-    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 
-    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 
-    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 
-    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 
-    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir', 
-    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 
-    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 
-    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon', 
-    'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+  final List<String> _cities = [
+    'Adana',
+    'Adıyaman',
+    'Afyonkarahisar',
+    'Ağrı',
+    'Aksaray',
+    'Amasya',
+    'Ankara',
+    'Antalya',
+    'Ardahan',
+    'Artvin',
+    'Aydın',
+    'Balıkesir',
+    'Bartın',
+    'Batman',
+    'Bayburt',
+    'Bilecik',
+    'Bingöl',
+    'Bitlis',
+    'Bolu',
+    'Burdur',
+    'Bursa',
+    'Çanakkale',
+    'Çankırı',
+    'Çorum',
+    'Denizli',
+    'Diyarbakır',
+    'Düzce',
+    'Edirne',
+    'Elazığ',
+    'Erzincan',
+    'Erzurum',
+    'Eskişehir',
+    'Gaziantep',
+    'Giresun',
+    'Gümüşhane',
+    'Hakkari',
+    'Hatay',
+    'Iğdır',
+    'Isparta',
+    'Istanbul',
+    'İzmir',
+    'Kahramanmaraş',
+    'Karabük',
+    'Karaman',
+    'Kars',
+    'Kastamonu',
+    'Kayseri',
+    'Kırıkkale',
+    'Kırklareli',
+    'Kırşehir',
+    'Kilis',
+    'Kocaeli',
+    'Konya',
+    'Kütahya',
+    'Malatya',
+    'Manisa',
+    'Mardin',
+    'Mersin',
+    'Muğla',
+    'Muş',
+    'Nevşehir',
+    'Niğde',
+    'Ordu',
+    'Osmaniye',
+    'Rize',
+    'Sakarya',
+    'Samsun',
+    'Siirt',
+    'Sinop',
+    'Sivas',
+    'Şanlıurfa',
+    'Şırnak',
+    'Tekirdağ',
+    'Tokat',
+    'Trabzon',
+    'Tunceli',
+    'Uşak',
+    'Van',
+    'Yalova',
+    'Yozgat',
+    'Zonguldak'
   ];
 
   @override
@@ -82,6 +154,8 @@ class _StartCreateState extends State<StartCreate> {
                   },
                 ),
                 const SizedBox(height: 25),
+                buildDateField(context),
+                const SizedBox(height: 25),
                 buildGenderField(context),
                 const SizedBox(height: 25),
                 buildCityField(context),
@@ -97,7 +171,8 @@ class _StartCreateState extends State<StartCreate> {
                 SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate() && _validateFields()) {
+                    if (_formKey.currentState!.validate() &&
+                        _validateFields()) {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => AddPhotoPage(
                           data: {
@@ -107,12 +182,14 @@ class _StartCreateState extends State<StartCreate> {
                             'gender': _gender,
                             'city': _city,
                             'bio': _aboutme,
+                            'birthDate': _birthdate,
                           },
                         ),
                       ));
                     }
                   },
-                  child: Text('CONTINUE', style: TextStyle(color: Colors.amber)),
+                  child:
+                      Text('CONTINUE', style: TextStyle(color: Colors.amber)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -136,6 +213,12 @@ class _StartCreateState extends State<StartCreate> {
     if (_city.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please select your city')),
+      );
+      return false;
+    }
+    if (_birthdate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select your birthdate')),
       );
       return false;
     }
@@ -228,7 +311,9 @@ class _StartCreateState extends State<StartCreate> {
             ),
             Text(
               _gender.isEmpty ? 'Select Gender' : _gender,
-              style: TextStyle(color: _gender.isEmpty ? Colors.grey : Colors.black, fontSize: 16),
+              style: TextStyle(
+                  color: _gender.isEmpty ? Colors.grey : Colors.black,
+                  fontSize: 16),
             ),
           ],
         ),
@@ -324,7 +409,52 @@ class _StartCreateState extends State<StartCreate> {
             ),
             Text(
               _city.isEmpty ? 'Select City' : _city,
-              style: TextStyle(color: _city.isEmpty ? Colors.grey : Colors.black, fontSize: 16),
+              style: TextStyle(
+                  color: _city.isEmpty ? Colors.grey : Colors.black,
+                  fontSize: 16),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildDateField(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        DateTime? pickedDate = await showDatePicker(
+          context: context,
+          initialDate: DateTime.now(),
+          firstDate: DateTime(1900),
+          lastDate: DateTime.now(),
+        );
+        if (pickedDate != null) {
+          setState(() {
+            _birthdate = Timestamp.fromDate(pickedDate);
+          });
+        }
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Birthdate*',
+              style: TextStyle(color: Colors.black, fontSize: 16),
+            ),
+            Text(
+              _birthdate == null
+                  ? 'Select Birthdate'
+                  : '${_birthdate!.toDate().day}/${_birthdate!.toDate().month}/${_birthdate!.toDate().year}',
+              style: TextStyle(
+                color: _birthdate == null ? Colors.grey : Colors.black,
+                fontSize: 16,
+              ),
             ),
           ],
         ),

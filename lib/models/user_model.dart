@@ -12,6 +12,7 @@ class User extends Equatable {
   final List<String> cuisine;
   final String? filePath;
   final String city;
+  final Timestamp birthDate;
 
   const User({
     this.id,
@@ -24,6 +25,7 @@ class User extends Equatable {
     required this.cuisine,
     this.filePath,
     required this.city,
+    required this.birthDate,
   });
 
   @override
@@ -38,6 +40,7 @@ class User extends Equatable {
         cuisine,
         filePath,
         city,
+        birthDate,
       ];
 
   Map<String, dynamic> toMap() {
@@ -51,21 +54,22 @@ class User extends Equatable {
       'cuisine': cuisine,
       'filePath': filePath,
       'city': city,
+      'birthDate': birthDate,
     };
   }
 
-  User copyWith({
-    String? id,
-    String? name,
-    String? surname,
-    String? gender,
-    String? bio,
-    String? diet,
-    String? genderPreference,
-    List<String>? cuisine,
-    String? filePath,
-    String? city,
-  }) {
+  User copyWith(
+      {String? id,
+      String? name,
+      String? surname,
+      String? gender,
+      String? bio,
+      String? diet,
+      String? genderPreference,
+      List<String>? cuisine,
+      String? filePath,
+      String? city,
+      Timestamp? birthDate}) {
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -77,6 +81,7 @@ class User extends Equatable {
       cuisine: cuisine ?? this.cuisine,
       filePath: filePath ?? this.filePath,
       city: city ?? this.city,
+      birthDate: birthDate ?? this.birthDate,
     );
   }
 
@@ -93,10 +98,12 @@ class User extends Equatable {
           List<String>.from(map['cuisine']), // Ensure it's a list of strings
       filePath: map['filePath'],
       city: map['city'],
+      birthDate: map['birthDate'],
     );
   }
 
   static User fromSnapshot(DocumentSnapshot snap) {
+    print("hüso");
     return User(
       id: snap.id,
       name: snap['name'],
@@ -109,6 +116,7 @@ class User extends Equatable {
           snap['cuisine']), // Convert dynamic list to List<String>
       filePath: snap['filePath'],
       city: snap['city'],
+      birthDate: snap['birthDate'],
     );
   }
 }

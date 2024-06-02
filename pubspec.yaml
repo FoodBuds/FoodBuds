@@ -47,6 +47,7 @@ dependencies:
   firebase_storage: ^11.7.7
   image_picker: ^0.8.7+4
   firebase_app_check: 
+  curved_navigation_bar: ^1.0.3
 
 
 dev_dependencies:

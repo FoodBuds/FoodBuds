@@ -10,7 +10,6 @@ class ProfileDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${user.name} ${user.surname}'),
         backgroundColor: Colors.amber,
       ),
       body: SingleChildScrollView(
@@ -20,8 +19,8 @@ class ProfileDetail extends StatelessWidget {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.6, // Profile image covers most of the screen
               width: double.infinity,
-              child: Image.asset(
-                'images/user.png',
+              child: Image.network(
+                user.filePath as String,
                 fit: BoxFit.cover,
               ),
             ),
@@ -59,13 +58,13 @@ class ProfileDetail extends StatelessWidget {
                     const Divider(),
                     _buildInfoText('City: ${user.city}'),
                     const Divider(),
-                    _buildInfoText('Bio: ${user.bio ?? 'No bio available'}'),
+                    _buildInfoText('Bio: ${user.bio}'),
                     const Divider(),
-                    _buildInfoText('Diet: ${user.diet ?? 'No diet preference'}'),
+                    _buildInfoText('Diet: ${user.diet}'),
                     const Divider(),
-                    _buildInfoText('Gender Preference: ${user.genderPreference ?? 'No gender preference'}'),
+                    _buildInfoText('Gender Preference: ${user.genderPreference}'),
                     const Divider(),
-                    _buildInfoText('Favorite Cuisines: ${user.cuisine ?? 'No favorite cuisines'}'),
+                    _buildInfoText('Favorite Cuisines: ${user.cuisine}'),
                   ],
                 ),
               ),

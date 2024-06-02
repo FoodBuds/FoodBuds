@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:foodbuds0_1/models/models.dart' as model;
@@ -22,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String email = '';
   String bio = '';
   String currentPlan = 'Free';
-  String showMe = 'Men';
+  String genderPreference = 'Male';
   String diet = 'Herbivore';
   String city = 'Istanbul';
   List<String> cuisine = [];
@@ -32,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedSubscriptionIndex = -1;
 
   File? _profileImage;
+  bool _isImageUploading = false;
   final _emailController = TextEditingController();
   final _bioController = TextEditingController();
 
@@ -58,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _emailController.text = email;
           bio = user.bio;
           _bioController.text = bio;
-          showMe = user.genderPreference.toString().split('.').last;
+          genderPreference = user.genderPreference.toString().split('.').last;
           diet = user.diet.toString().split('.').last;
           cuisine = user.cuisine;
           filePath = user.filePath as String;
@@ -104,7 +106,42 @@ class _ProfilePageState extends State<ProfilePage> {
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
+        _isImageUploading = true; // Show loading indicator
       });
+      await _uploadImageToFirebase();
+    }
+  }
+
+  Future<void> _uploadImageToFirebase() async {
+    if (_profileImage != null) {
+      try {
+        // Upload the file to Firebase Storage
+        String fileName = 'profile_images/${_authRepo.currentUser?.uid}.png';
+        UploadTask uploadTask = FirebaseStorage.instance
+            .ref()
+            .child(fileName)
+            .putFile(_profileImage!);
+
+        TaskSnapshot snapshot = await uploadTask;
+
+        // Get the download URL
+        String downloadURL = await snapshot.ref.getDownloadURL();
+
+        // Update the user's profile with the new image URL
+        String? userId = await _authRepo.getUserId();
+        if (userId != null) {
+          await _databaseRepo.updateUser({'filePath': downloadURL});
+          setState(() {
+            filePath = downloadURL;
+          });
+        }
+      } catch (e) {
+        print(e);
+      } finally {
+        setState(() {
+          _isImageUploading = false; // Hide loading indicator
+        });
+      }
     }
   }
 
@@ -227,15 +264,15 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Men');
+                Navigator.pop(context, 'Male');
               },
-              child: const Text('Men'),
+              child: const Text('Male'),
             ),
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Women');
+                Navigator.pop(context, 'Female');
               },
-              child: const Text('Women'),
+              child: const Text('Female'),
             ),
             SimpleDialogOption(
               onPressed: () {
@@ -250,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (selectedOption != null) {
       setState(() {
-        showMe = selectedOption;
+        genderPreference = selectedOption;
       });
       _validateAndSave();
     }
@@ -306,7 +343,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-    final List<String> cities = [
+  final List<String> cities = [
     'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 
     'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 
     'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 
@@ -324,16 +361,62 @@ class _ProfilePageState extends State<ProfilePage> {
     String? selectedCity = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Şehir Seçin'),
-          children: cities.map((city) {
-            return SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, city);
-              },
-              child: Text(city),
+        TextEditingController searchController = TextEditingController();
+        List<String> filteredCities = List.from(cities);
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Şehir Seçin'),
+              content: Container(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search City',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          filteredCities = cities
+                              .where((city) => city
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredCities.length,
+                        itemBuilder: (context, index) {
+                          return SimpleDialogOption(
+                            onPressed: () {
+                              Navigator.pop(context, filteredCities[index]);
+                            },
+                            child: Text(filteredCities[index]),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -479,9 +562,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 TextButton(
                   child: const Text('Save'),
-                  onPressed: () {
-                    Navigator.pop(context, selected);
-                  },
+                  onPressed: selected.isNotEmpty
+                      ? () {
+                          Navigator.pop(context, selected);
+                        }
+                      : null,
                 ),
               ],
             );
@@ -510,7 +595,7 @@ class _ProfilePageState extends State<ProfilePage> {
           'name': name,
           'email': email,
           'bio': bio,
-          'genderPreference': showMe,
+          'genderPreference': genderPreference,
           'diet': diet,
           'cuisine': cuisine,
           'filePath': filePath,
@@ -550,7 +635,7 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.amber,
-        title: const Text('     Profile', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
+        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _isLoading
@@ -565,23 +650,21 @@ class _ProfilePageState extends State<ProfilePage> {
                         const SizedBox(height: 16),
                         GestureDetector(
                           onTap: _pickImage,
-                          child: CircleAvatar(
-                            radius: 50,
+                          child: LoadingCircleAvatar(
+                            isLoading: _isImageUploading,
                             backgroundImage: _profileImage != null
                                 ? FileImage(_profileImage!)
                                 : (filePath.isNotEmpty
-                                        ? (filePath.startsWith('http')
-                                            ? NetworkImage(filePath)
-                                            : FileImage(File(filePath)))
-                                        : AssetImage(
-                                            'images/default_profile.png'))
-                                    as ImageProvider,
+                                    ? (filePath.startsWith('http')
+                                        ? NetworkImage(filePath)
+                                        : FileImage(File(filePath)))
+                                    : AssetImage('images/default_profile.png'))
+                                as ImageProvider,
+                            radius: 50,
                           ),
                         ),
                         const SizedBox(height: 8),
-                        Text('$name',
-                            style:
-                                TextStyle(color: Colors.white, fontSize: 20)),
+                        Text('$name', style: TextStyle(color: Colors.white, fontSize: 20)),
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -609,10 +692,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                       });
                                     },
                                   )
-                                : ProfileDisplayField(
-                                    label: 'Name', value: name),
-                            ProfileDisplayField(
-                                label: 'Email', value: email),
+                                : ProfileDisplayField(label: 'Name', value: name),
+                            ProfileDisplayField(label: 'Email', value: email),
                             isEditing
                                 ? ProfileEditableField(
                                     label: 'Bio',
@@ -623,8 +704,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       });
                                     },
                                   )
-                                : ProfileDisplayField(
-                                    label: 'Bio', value: bio),
+                                : ProfileDisplayField(label: 'Bio', value: bio),
                             if (isEditing)
                               ElevatedButton(
                                 onPressed: _validateAndSave,
@@ -632,8 +712,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
                                   foregroundColor: Colors.amber,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 15, horizontal: 50),
+                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                   ),
@@ -658,68 +737,81 @@ class _ProfilePageState extends State<ProfilePage> {
                                       });
                                     },
                                   )
-                                : ProfileDisplayField(
-                                    label: 'Current Plan',
-                                    value: currentPlan,
-                                    isEditable: false),
-                          ],
-                        ),
-                        const Divider(thickness: 1),
+                                : ProfileDisplayField(label: 'Current Plan', value: currentPlan, isEditable: false),
+                        ],
+                      ),
+                      const Divider(thickness: 1),
                         ProfileSection(
                           title: 'Discovery Settings',
                           children: [
-                            ProfileDisplayField(
-                              label: 'City',
-                              value: city,
-                              onTap: _changeCity,
-                            ),
-                            ProfileDisplayField(
-                              label: 'Diet',
-                              value: diet,
-                              onTap: _changeDiet,
-                            ),
-                            ProfileDisplayField(
-                              label: 'Show Me',
-                              value: showMe,
-                              onTap: _changeShowMeOption,
-                            ),
-                            ProfileDisplayField(
-                              label: 'Cuisine',
-                              value: cuisine.join(', '),
-                              onTap: _changeCuisine,
-                            ),
+                            ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
+                            ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
+                            ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
+                            ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  const Divider(thickness: 1),
-                  ElevatedButton(
-                    onPressed: () {
-                      AuthenticationRepository().signOut();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const FirstScreen()),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white),
-                    child: const Text('Logout'),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        const Divider(thickness: 1),
+                        ElevatedButton(
+                          onPressed: () {
+                            AuthenticationRepository().signOut();
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const FirstScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                          child: const Text('Logout'),
+                        ),
+                        const SizedBox(height: 8), // Added space between buttons
+                        ElevatedButton(
+                          onPressed: () async => deleteUser(),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                          child: const Text('Delete Account'),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 8), // Added space between buttons
-                  ElevatedButton(
-                    onPressed: () async => deleteUser(),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
-                        foregroundColor: Colors.white),
-                    child: const Text('Delete Account'),
-                  ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
+    );
+  }
+}
+
+class LoadingCircleAvatar extends StatelessWidget {
+  final bool isLoading;
+  final ImageProvider? backgroundImage;
+  final double radius;
+
+  const LoadingCircleAvatar({
+    Key? key,
+    required this.isLoading,
+    required this.backgroundImage,
+    this.radius = 50,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        CircleAvatar(
+          radius: radius,
+          backgroundImage: backgroundImage,
+        ),
+        if (isLoading)
+          CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+      ],
     );
   }
 }

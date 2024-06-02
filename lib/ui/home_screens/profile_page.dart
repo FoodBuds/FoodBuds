@@ -23,7 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String email = '';
   String bio = '';
   String currentPlan = 'Free';
-  String showMe = 'Men';
+  String genderPreference = 'Male';
   String diet = 'Herbivore';
   String city = 'Istanbul';
   List<String> cuisine = [];
@@ -60,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _emailController.text = email;
           bio = user.bio;
           _bioController.text = bio;
-          showMe = user.genderPreference.toString().split('.').last;
+          genderPreference = user.genderPreference.toString().split('.').last;
           diet = user.diet.toString().split('.').last;
           cuisine = user.cuisine;
           filePath = user.filePath as String;
@@ -287,7 +287,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     if (selectedOption != null) {
       setState(() {
-        showMe = selectedOption;
+        genderPreference = selectedOption;
       });
       _validateAndSave();
     }
@@ -361,16 +361,62 @@ class _ProfilePageState extends State<ProfilePage> {
     String? selectedCity = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        return SimpleDialog(
-          title: const Text('Şehir Seçin'),
-          children: cities.map((city) {
-            return SimpleDialogOption(
-              onPressed: () {
-                Navigator.pop(context, city);
-              },
-              child: Text(city),
+        TextEditingController searchController = TextEditingController();
+        List<String> filteredCities = List.from(cities);
+
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: const Text('Şehir Seçin'),
+              content: Container(
+                width: double.maxFinite,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search City',
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          filteredCities = cities
+                              .where((city) => city
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList();
+                        });
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    Expanded(
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: filteredCities.length,
+                        itemBuilder: (context, index) {
+                          return SimpleDialogOption(
+                            onPressed: () {
+                              Navigator.pop(context, filteredCities[index]);
+                            },
+                            child: Text(filteredCities[index]),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -549,7 +595,7 @@ class _ProfilePageState extends State<ProfilePage> {
           'name': name,
           'email': email,
           'bio': bio,
-          'genderPreference': showMe,
+          'genderPreference': genderPreference,
           'diet': diet,
           'cuisine': cuisine,
           'filePath': filePath,
@@ -700,7 +746,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
                             ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
-                            ProfileDisplayField(label: 'Show Me', value: showMe, onTap: _changeShowMeOption),
+                            ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
                             ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine),
                           ],
                         ),

@@ -49,7 +49,8 @@ class _ChatPageState extends State<ChatPage> {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No chat rooms available'));
+            return Center(child: Text('No chat rooms available. Start swiping!', style: TextStyle(
+                color: Colors.white)));
           }
 
           List<ChatRoom> chatRooms = snapshot.data!;

@@ -38,13 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
         children: const <Widget>[
           HomeScreenContent(),
           ChatPage(),
-          LikePage(),
+          LikePage(), // Ensure LikePage is included here
           ProfilePage(),
         ],
       ),
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.white,
-        buttonBackgroundColor: Colors.amber,
+        buttonBackgroundColor: Colors.orange,
         color: Colors.amber,
         height: 60,
         items: const <Widget>[
@@ -59,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
 
 class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});

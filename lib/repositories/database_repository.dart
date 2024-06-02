@@ -8,6 +8,50 @@ class DatabaseRepository {
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
 
+  Future<List<User>> getUsersWhoLiked(String currentUserId) async {
+    // Query to get users who liked the current user
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collection('likes')
+        .where('likedUserId', isEqualTo: currentUserId)
+        .get();
+
+    List<User> likedUsers = [];
+    for (var doc in snapshot.docs) {
+      String userId = doc['likerUserId'];
+      User? user = await getUserById(userId);
+      if (user != null) {
+        likedUsers.add(user);
+      }
+    }
+    return likedUsers;
+  }
+
+  Future<List<User>> getUsersWhoDisliked(String currentUserId) async {
+    // Query to get users who disliked the current user
+    QuerySnapshot snapshot = await _firebaseFirestore
+        .collection('dislikes')
+        .where('dislikedUserId', isEqualTo: currentUserId)
+        .get();
+
+    List<User> dislikedUsers = [];
+    for (var doc in snapshot.docs) {
+      String userId = doc['dislikerUserId'];
+      User? user = await getUserById(userId);
+      if (user != null) {
+        dislikedUsers.add(user);
+      }
+    }
+    return dislikedUsers;
+  }
+
+  Future<bool> isPremiumUser(String userId) async {
+    // Query to check if the user is premium
+    DocumentSnapshot doc = await _firebaseFirestore.collection('users').doc(userId).get();
+    return doc['isPremium'] ?? false;
+  }
+
+
+
   Future<void> createUser(User user) async {
     await _firebaseFirestore.collection('users').doc(user.id).set(user.toMap());
   }

@@ -1,26 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/models/models.dart';
-import 'package:foodbuds0_1/repositories/chat_repository.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_page.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/ui/home_screens/home_screens.dart';
 
 class DateMenuPage extends StatelessWidget {
-  final Restaurant restaurant;
-  final String receiverId;
-  final String name;
-  final String imageUrl;
+  final String? locationName;
+  final String? closingTime;
+  final String? description;
+  final String image;
 
   const DateMenuPage({
     super.key,
-    required this.restaurant,
-    required this.receiverId,
-    required this.name,
-    required this.imageUrl,
+    this.locationName,
+    this.closingTime,
+    this.description,
+    this.image = 'assets/coffee_shop.jpg', // Default image if none provided
   });
-
-  Future<void> sendDateMessage() async {
-    await ChatRepository().sendDatingMessage(receiverId, restaurant);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +25,7 @@ class DateMenuPage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(20.0),
               child: Image.asset(
-                restaurant.filePath ??
-                    'images/American.png', // Default image if none provided
+                image,
                 height: 200,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -41,7 +33,7 @@ class DateMenuPage extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              restaurant.restaurantName ?? 'Default Location Name',
+              locationName ?? 'Default Location Name',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -60,7 +52,7 @@ class DateMenuPage extends StatelessWidget {
               ],
             ),
             SizedBox(height: 10),
-            if (restaurant.closingHour != null) ...[
+            if (closingTime != null) ...[
               Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -73,7 +65,7 @@ class DateMenuPage extends StatelessWidget {
                     Icon(Icons.access_time, color: Colors.black),
                     SizedBox(width: 5),
                     Text(
-                      'Closed at: ${restaurant.closingHour}',
+                      'Closed at: $closingTime',
                       style: TextStyle(color: Colors.amber),
                     ),
                   ],
@@ -88,7 +80,7 @@ class DateMenuPage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                'A default description of the location.',
+                description ?? 'A default description of the location.',
                 style: TextStyle(color: Colors.amber),
               ),
             ),
@@ -103,10 +95,8 @@ class DateMenuPage extends StatelessWidget {
                 side: BorderSide(color: Colors.amber),
               ),
               onPressed: () {
-                sendDateMessage();
                 Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChatDetailPage(
-                      name: name, imageUrl: imageUrl, receiverId: receiverId),
+                  builder: (context) => HomeScreen(),
                 ));
               },
               child: Text(

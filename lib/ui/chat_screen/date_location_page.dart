@@ -1,101 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/models/models.dart';
-import 'package:foodbuds0_1/repositories/repositories.dart';
-import 'package:foodbuds0_1/repositories/restaurant_repository.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
+import 'package:foodbuds0_1/ui//chat_screen/chat_screens.dart';
 
-class RestaurantSelectionPage extends StatefulWidget {
-  final String receiverId;
-  final String name;
-  final String imageUrl;
-
-  const RestaurantSelectionPage({
-    super.key,
-    required this.receiverId,
-    required this.name,
-    required this.imageUrl,
-  });
+class LocationSelectionPage extends StatefulWidget {
+  const LocationSelectionPage({super.key});
 
   @override
-  State<RestaurantSelectionPage> createState() =>
-      _RestaurantSelectionPageState();
+  State<LocationSelectionPage> createState() => _LocationSelectionPageState();
 }
 
-class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
-  Restaurant? selectedRestaurant;
-
-  final List<Restaurant> restaurants = RestaurantRepository().getRestaurants();
+class _LocationSelectionPageState extends State<LocationSelectionPage> {
+  String? currentLocationName;
+  String? currentLocationHours;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Select a Restaurant'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
-                itemCount: restaurants.length,
-                itemBuilder: (context, index) {
-                  var restaurant = restaurants[index];
-                  return Column(
-                    children: [
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: Image.asset(
-                                restaurant.filePath ?? 'assets/default.jpg',
-                                width: double.infinity,
-                                height: 120,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              restaurant.restaurantName,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Row(
-                              children: [
-                                Icon(Icons.access_time, color: Colors.green),
-                                SizedBox(width: 5),
-                                Text(
-                                  restaurant.closingHour,
-                                  style: TextStyle(color: Colors.amber),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        trailing:
-                            Icon(Icons.arrow_forward, color: Colors.black),
-                        onTap: () {
+            SizedBox(height: 40), // Add this SizedBox to create space from the top
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select a location',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.bookmark_border, color: Colors.black),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => SavedLocationsWidget(
+                        onSelect: (name, hours) {
                           setState(() {
-                            selectedRestaurant = restaurant;
+                            currentLocationName = name;
+                            currentLocationHours = hours;
                           });
                         },
                       ),
-                      Divider(color: Colors.black),
-                    ],
-                  );
-                },
+                      backgroundColor: Colors.white,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            ClipOval(
+              child: Image.asset(
+                'images/map.png',
+                height: 200,
+                width: 200,
+                fit: BoxFit.cover,
               ),
             ),
-            if (selectedRestaurant != null) ...[
+            SizedBox(height: 30),
+            if (currentLocationName != null) ...[
               Text(
-                selectedRestaurant!.restaurantName,
+                currentLocationName!,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -103,7 +73,7 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                 ),
               ),
               SizedBox(height: 8),
-              if (selectedRestaurant!.closingHour != null) ...[
+              if (currentLocationHours != null) ...[
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
@@ -118,7 +88,7 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                     ],
                   ),
                   child: Text(
-                    selectedRestaurant!.closingHour,
+                    currentLocationHours!,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.amber,
@@ -130,20 +100,19 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
             ],
             ElevatedButton(
               onPressed: () {
-                if (selectedRestaurant == null) {
+                if (currentLocationName == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Please select a restaurant first.'),
+                      content: Text('Please select a location first.'),
                     ),
                   );
                 } else {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => DateMenuPage(
-                        restaurant: selectedRestaurant!,
-                        receiverId: widget.receiverId,
-                        name: widget.name,
-                        imageUrl: widget.imageUrl,
+                        locationName: currentLocationName,
+                        closingTime: currentLocationHours,
+                        description: 'A cozy place to enjoy coffee and snacks.', // Example description
                       ),
                     ),
                   );
@@ -160,6 +129,96 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class SavedLocationsWidget extends StatelessWidget {
+  final List<Map<String, String>> locations = [
+    {
+      'name': 'WILLY\'S',
+      'image': 'assets/location1.jpg',
+      'hours': 'Closed at: 12:00 PM',
+    },
+    {
+      'name': 'LOVER\'S REST',
+      'image': 'assets/location2.jpg',
+      'hours': 'Closed at: 1:00 AM',
+    },
+  ];
+
+  final Function(String, String) onSelect;
+
+  SavedLocationsWidget({required this.onSelect, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Saved Locations',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),
+          ),
+          SizedBox(height: 10),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: locations.length,
+            itemBuilder: (context, index) {
+              var location = locations[index];
+              return Column(
+                children: [
+                  ListTile(
+                    contentPadding: EdgeInsets.symmetric(vertical: 8.0),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.asset(
+                            location['image'] ?? 'assets/default.jpg',
+                            width: double.infinity,
+                            height: 120,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          location['name'] ?? 'Unknown',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time, color: Colors.green),
+                            SizedBox(width: 5),
+                            Text(
+                              location['hours'] ?? 'No hours available',
+                              style: TextStyle(color: Colors.amber),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    trailing: Icon(Icons.arrow_forward, color: Colors.black),
+                    onTap: () {
+                      onSelect(location['name']!, location['hours']!);
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  Divider(color: Colors.black),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }

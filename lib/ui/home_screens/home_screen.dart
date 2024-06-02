@@ -339,14 +339,35 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Image.network(
-                                        filePath, 
-                                        fit: BoxFit.cover,
-                                        width: constraints.maxWidth,
-                                        height: constraints.maxHeight * 0.60,
+                                    child: Stack( 
+                                      children: [ 
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(20),
+                                          child: Image.network(
+                                            filePath, 
+                                            fit: BoxFit.cover,
+                                            width: constraints.maxWidth,
+                                            height: constraints.maxHeight * 0.60,
+                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              } else {
+                                                return Container(
+                                                  width: constraints.maxWidth,
+                                                  height: constraints.maxHeight * 0.60,
+                                                  child: Center(
+                                                    child: CircularProgressIndicator(
+                                                      value: loadingProgress.expectedTotalBytes != null
+                                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                                          : null,
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          ),
                                       ),
+                                    ],
                                     ),
                                   ),
                                   Container(

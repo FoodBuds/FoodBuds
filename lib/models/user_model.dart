@@ -119,4 +119,15 @@ class User extends Equatable {
       birthDate: snap['birthDate'],
     );
   }
+
+  int getAge() {
+    DateTime tempBirthDate = birthDate.toDate();
+    DateTime today = DateTime.now();
+    int age = today.year - tempBirthDate.year;
+    if (today.month < tempBirthDate.month ||
+        (today.month == tempBirthDate.month && today.day < tempBirthDate.day)) {
+      age--;
+    }
+    return age;
+  }
 }

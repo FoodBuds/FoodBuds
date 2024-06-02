@@ -80,7 +80,7 @@ class ProfileDetail extends StatelessWidget {
                         'Favorite Cuisines: ${user.cuisine.join(', ')}'),
                     const Divider(),
                     _buildInfoText(
-                        'Age: ${_calculateAge(user.birthDate.toDate())}'), // Display as timestamp
+                        'Age: ${user.getAge()}'), // Display as timestamp
                   ],
                 ),
               ),

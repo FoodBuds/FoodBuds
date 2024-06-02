@@ -120,6 +120,7 @@ class User extends Equatable {
     );
   }
 
+
   int getAge() {
     DateTime tempBirthDate = birthDate.toDate();
     DateTime today = DateTime.now();

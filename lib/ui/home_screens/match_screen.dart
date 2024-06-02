@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:foodbuds0_1/ui/chat_screen/chat_page.dart';
+import 'package:foodbuds0_1/models/user_model.dart' as model;
 import 'home_screens.dart';
 
 class MatchPage extends StatelessWidget {
-  const MatchPage({super.key});
+  final model.User currentUser;
+  final model.User likedUser;
+
+  const MatchPage({super.key, required this.currentUser, required this.likedUser});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class MatchPage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                'Lucy likes you too',
+                '${likedUser.name} likes you too',
                 style: TextStyle(
                   fontSize: 18,
                   color: Colors.white,
@@ -52,39 +55,16 @@ class MatchPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('images/user.png'), // Replace with actual image paths
+                    backgroundImage: NetworkImage(currentUser.filePath!),
                   ),
                   SizedBox(width: 20),
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('images/user.png'), // Replace with actual image paths
+                    backgroundImage: NetworkImage(likedUser.filePath!),
                   ),
                 ],
               ),
               SizedBox(height: 40),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ChatPage(),
-                  ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.amber,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                ),
-                child: Text(
-                  'SEND A MESSAGE',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(

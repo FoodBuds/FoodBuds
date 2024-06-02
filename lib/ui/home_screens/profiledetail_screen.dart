@@ -75,6 +75,7 @@ class ProfileDetail extends StatelessWidget {
                     const Divider(),
                     _buildInfoText(
                         'Gender Preference: ${user.genderPreference}'),
+
                     const Divider(),
                     _buildInfoText(
                         'Favorite Cuisines: ${user.cuisine.join(', ')}'),

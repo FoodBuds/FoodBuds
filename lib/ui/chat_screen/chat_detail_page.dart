@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:foodbuds0_1/models/models.dart';
+import 'package:foodbuds0_1/ui/home_screens/home_screens.dart';
 
 class ChatDetailPage extends StatefulWidget {
   final String name;
@@ -66,8 +67,23 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           ),
           title: Row(
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(widget.imageUrl),
+              GestureDetector(
+                onTap: () async {
+                  // Fetch user details from Firestore or any data source
+                  DocumentSnapshot userSnapshot = await FirebaseFirestore
+                      .instance
+                      .collection('users')
+                      .doc(widget.receiverId)
+                      .get();
+                  User user = User.fromSnapshot(userSnapshot);
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ProfileDetail(user: user),
+                  ));
+                },
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(widget.imageUrl),
+                ),
               ),
               const SizedBox(width: 8),
               Text(
@@ -82,10 +98,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               onPressed: () {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => RestaurantSelectionPage(
-                    receiverId: widget.receiverId,
-                    name: widget.name,
-                    imageUrl: widget.imageUrl,
-                  ),
+                      receiverId: widget.receiverId,
+                      name: widget.name,
+                      imageUrl: widget.imageUrl),
                 ));
               },
             ),

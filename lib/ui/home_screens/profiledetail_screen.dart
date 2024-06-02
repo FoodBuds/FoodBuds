@@ -6,6 +6,16 @@ class ProfileDetail extends StatelessWidget {
 
   ProfileDetail({required this.user});
 
+  int _calculateAge(DateTime birthDate) {
+    DateTime today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +80,7 @@ class ProfileDetail extends StatelessWidget {
                         'Favorite Cuisines: ${user.cuisine.join(', ')}'),
                     const Divider(),
                     _buildInfoText(
-                        'Birthdate: ${user.birthDate.toDate()}'), // Display as timestamp
+                        'Age: ${_calculateAge(user.birthDate.toDate())}'), // Display as timestamp
                   ],
                 ),
               ),

@@ -32,8 +32,6 @@ class DatabaseRepository {
     return _firebaseFirestore.collection('users').doc(userId).delete();
   }
 
-
-
   Future<String?> uploadFile(File file) async {
     try {
       Reference ref =
@@ -193,11 +191,11 @@ class DatabaseRepository {
     return matchedUserIds;
   }
 
-
-  Future<void> superLikeUser(String superLikerUserId, String superLikedUserId) async {
+  Future<void> superLikeUser(
+      String superLikerUserId, String superLikedUserId) async {
     try {
       String docId = '$superLikerUserId$superLikedUserId';
-      await _firebaseFirestore.collection('super_likes').doc(docId).set({
+      await _firebaseFirestore.collection('superlikes').doc(docId).set({
         'superLikerUserId': superLikerUserId,
         'superLikedUserId': superLikedUserId,
       });
@@ -209,7 +207,10 @@ class DatabaseRepository {
 
   Future<bool> checkForSuperLike(String userId, String superLikedUserId) async {
     try {
-      DocumentSnapshot doc = await _firebaseFirestore.collection('super_likes').doc('$userId$superLikedUserId').get();
+      DocumentSnapshot doc = await _firebaseFirestore
+          .collection('superlikes')
+          .doc('$userId$superLikedUserId')
+          .get();
       return doc.exists;
     } catch (e) {
       print("Error checking for super like: $e");
@@ -219,7 +220,8 @@ class DatabaseRepository {
 
   Future<List<User>> getSuperLikedByUsers(String userId) async {
     try {
-      QuerySnapshot querySnapshot = await _firebaseFirestore.collection('super_likes')
+      QuerySnapshot querySnapshot = await _firebaseFirestore
+          .collection('superlikes')
           .where('superLikedUserId', isEqualTo: userId)
           .get();
 
@@ -237,7 +239,4 @@ class DatabaseRepository {
       return [];
     }
   }
-
-
 }
-

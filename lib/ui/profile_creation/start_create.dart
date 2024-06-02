@@ -168,8 +168,6 @@ class _StartCreateState extends State<StartCreate> {
                     _aboutme = value;
                   },
                 ),
-                const SizedBox(height: 25),
-                buildDateField(context),
                 SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
@@ -414,49 +412,6 @@ class _StartCreateState extends State<StartCreate> {
               style: TextStyle(
                   color: _city.isEmpty ? Colors.grey : Colors.black,
                   fontSize: 16),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildDateField(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        DateTime? pickedDate = await showDatePicker(
-          context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (pickedDate != null) {
-          setState(() {
-            _birthdate = Timestamp.fromDate(pickedDate);
-          });
-        }
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Birthdate*',
-              style: TextStyle(color: Colors.black, fontSize: 16),
-            ),
-            Text(
-              _birthdate == null
-                  ? 'Select Birthdate'
-                  : '${_birthdate!.toDate().day}/${_birthdate!.toDate().month}/${_birthdate!.toDate().year}',
-              style: TextStyle(
-                color: _birthdate == null ? Colors.grey : Colors.black,
-                fontSize: 16,
-              ),
             ),
           ],
         ),

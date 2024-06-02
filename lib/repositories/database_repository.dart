@@ -53,11 +53,12 @@ class DatabaseRepository {
   Future<List<String>> getUserIds() async {
     List<String> userIds = [];
     try {
-      QuerySnapshot querySnapshot = await _firebaseFirestore.collection('users').get();
+      QuerySnapshot querySnapshot =
+          await _firebaseFirestore.collection('users').get();
 
       for (QueryDocumentSnapshot doc in querySnapshot.docs) {
         if (doc.exists) {
-          String userId = doc.id; 
+          String userId = doc.id;
           userIds.add(userId);
         }
       }
@@ -69,7 +70,8 @@ class DatabaseRepository {
 
   Future<User?> getUserById(String userId) async {
     try {
-      DocumentSnapshot doc = await _firebaseFirestore.collection('users').doc(userId).get();
+      DocumentSnapshot doc =
+          await _firebaseFirestore.collection('users').doc(userId).get();
       if (doc.exists) {
         return User.fromSnapshot(doc);
       }
@@ -81,7 +83,6 @@ class DatabaseRepository {
 
   Future<void> likeUser(String likerUserId, String likedUserId) async {
     try {
-
       String docId = '$likerUserId$likedUserId';
 
       await _firebaseFirestore.collection('likes').doc(docId).set({
@@ -91,13 +92,12 @@ class DatabaseRepository {
       print("User liked successfully: $likerUserId liked $likedUserId");
     } catch (e) {
       print("Error liking user: $e");
-      rethrow; 
+      rethrow;
     }
   }
-  
-    Future<void> dislikeUser(String dislikerUserId, String dislikedUserId) async {
-    try {
 
+  Future<void> dislikeUser(String dislikerUserId, String dislikedUserId) async {
+    try {
       String docId = '$dislikerUserId$dislikedUserId';
 
       await _firebaseFirestore.collection('dislikes').doc(docId).set({
@@ -107,15 +107,21 @@ class DatabaseRepository {
       print("User liked successfully: $dislikerUserId liked $dislikedUserId");
     } catch (e) {
       print("Error liking user: $e");
-      rethrow;  // Rethrow the error to be caught by the calling function
+      rethrow; // Rethrow the error to be caught by the calling function
     }
   }
 
   Future<bool> checkForMatch(String userId, String likedUserId) async {
     try {
-      DocumentSnapshot doc = await _firebaseFirestore.collection('likes').doc('$userId$likedUserId').get();
+      DocumentSnapshot doc = await _firebaseFirestore
+          .collection('likes')
+          .doc('$userId$likedUserId')
+          .get();
       if (doc.exists) {
-        DocumentSnapshot reverseDoc = await _firebaseFirestore.collection('likes').doc('$likedUserId$userId').get();
+        DocumentSnapshot reverseDoc = await _firebaseFirestore
+            .collection('likes')
+            .doc('$likedUserId$userId')
+            .get();
         return reverseDoc.exists;
       }
     } catch (e) {
@@ -124,17 +130,18 @@ class DatabaseRepository {
     return false;
   }
 
-Future<List<String>> matchUsers() async {
-
-    String currentUserId = await AuthenticationRepository().getUserId() as String;
+  Future<List<String>> matchUsers() async {
+    String currentUserId =
+        await AuthenticationRepository().getUserId() as String;
     User currentUser = await getUserById(currentUserId) as User;
 
     List<MapEntry<User, int>> potentialMatches = [];
-    
+
     QuerySnapshot querySnapshot;
 
     if (currentUser.genderPreference == 'everyone') {
-      querySnapshot = await FirebaseFirestore.instance.collection('users').get();
+      querySnapshot =
+          await FirebaseFirestore.instance.collection('users').get();
     } else {
       querySnapshot = await FirebaseFirestore.instance
           .collection('users')
@@ -142,17 +149,24 @@ Future<List<String>> matchUsers() async {
           .get();
     }
 
-    List<User> allUsers = querySnapshot.docs.map((doc) => User.fromSnapshot(doc)).toList();
+    List<User> allUsers =
+        querySnapshot.docs.map((doc) => User.fromSnapshot(doc)).toList();
 
     for (User user in allUsers) {
       String? _userId = user.id;
       if (user.id == currentUser.id) {
         continue;
       }
-      DocumentSnapshot ifLiked = await _firebaseFirestore.collection('likes').doc('$currentUserId$_userId').get();
-      DocumentSnapshot ifDisliked = await _firebaseFirestore.collection('dislikes').doc('$currentUserId$_userId').get();
+      DocumentSnapshot ifLiked = await _firebaseFirestore
+          .collection('likes')
+          .doc('$currentUserId$_userId')
+          .get();
+      DocumentSnapshot ifDisliked = await _firebaseFirestore
+          .collection('dislikes')
+          .doc('$currentUserId$_userId')
+          .get();
 
-      if (ifLiked.exists || ifDisliked.exists){
+      if (ifLiked.exists || ifDisliked.exists) {
         continue;
       }
       int score = 0;
@@ -172,12 +186,13 @@ Future<List<String>> matchUsers() async {
     }
     potentialMatches.sort((a, b) => b.value.compareTo(a.value));
     List<String> matchedUserIds = potentialMatches
-    .map((entry) => entry.key.id) 
-    .where((id) => id != null) 
-    .map((id) => id!) 
-    .toList(); 
+        .map((entry) => entry.key.id)
+        .where((id) => id != null)
+        .map((id) => id!)
+        .toList();
     return matchedUserIds;
   }
+
 
   Future<void> superLikeUser(String superLikerUserId, String superLikedUserId) async {
     try {
@@ -222,6 +237,7 @@ Future<List<String>> matchUsers() async {
       return [];
     }
   }
+
 
 }
 

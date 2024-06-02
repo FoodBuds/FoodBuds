@@ -77,23 +77,13 @@ class ChatRepository extends ChangeNotifier {
     List<String> ids = [currentUserId, receiverId];
     ids.sort();
     String chatRoomId = ids.join("_");
-    Message newMessage = Message(
-      senderId: "",
-      senderName: "",
-      receiverId: "",
-      timestamp: Timestamp.now(),
-      message: "",
-    );
 
-    await _fireStore
-        .collection('chat_rooms')
-        .doc(chatRoomId)
-        .collection('messages')
-        .add(newMessage.toMap());
-
+    // Create chat room document with metadata
     await _fireStore.collection('chat_rooms').doc(chatRoomId).set({
-      'field_name':
-          'field_value', // Replace with the actual field name and value you want to add
+      'users': ids,
+      'created_at': Timestamp.now(),
+      'last_message': '',
+      // Add other fields if necessary
     }, SetOptions(merge: true));
   }
 

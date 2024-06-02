@@ -300,7 +300,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           ? Container(
             color: Colors.white,
             child: Center(
-                child: CircularProgressIndicator(), // Show loading indicator
+                child: CircularProgressIndicator(), 
               ),
           )
           : _users.isEmpty
@@ -412,14 +412,12 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical:
-                                    20.0), // Increase the padding to move buttons higher
+                                vertical: 20.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 CircleAvatar(
-                                  radius: constraints.maxWidth *
-                                      0.1, // Increase circle avatar size
+                                  radius: constraints.maxWidth * 0.1,
                                   backgroundColor: Colors.red,
                                   child: IconButton(
                                     icon: const Icon(Icons.clear, color: Colors.white, size: 40),
@@ -427,7 +425,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                   ),
                                 ),
                                 CircleAvatar(
-                                  radius: constraints.maxWidth * 0.12, // Increase circle avatar size
+                                  radius: constraints.maxWidth * 0.12,
                                   backgroundColor: Colors.blue,
                                   child: IconButton(
                                     icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
@@ -435,8 +433,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                   ),
                                 ),
                                 CircleAvatar(
-                                  radius: constraints.maxWidth *
-                                      0.1, // Increase circle avatar size
+                                  radius: constraints.maxWidth * 0.1,
                                   backgroundColor: Colors.green,
                                   child: IconButton(
                                     icon: const Icon(Icons.check, color: Colors.white, size: 40),

@@ -227,15 +227,15 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Men');
+                Navigator.pop(context, 'Male');
               },
-              child: const Text('Men'),
+              child: const Text('Male'),
             ),
             SimpleDialogOption(
               onPressed: () {
-                Navigator.pop(context, 'Women');
+                Navigator.pop(context, 'Female');
               },
-              child: const Text('Women'),
+              child: const Text('Female'),
             ),
             SimpleDialogOption(
               onPressed: () {

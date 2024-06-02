@@ -108,10 +108,13 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       bool isMatch =
           await _databaseRepository.checkForMatch(likerUserId, likedUserId);
       if (isMatch) {
-        ChatRepository().createMessageRoom(likedUserId);
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MatchPage(),
-        ));
+        model.User? likedUser = await _databaseRepository.getUserById(likedUserId);
+        model.User? currentUser = await _databaseRepository.getUserById(likerUserId);
+        if (likedUser != null && currentUser != null) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => MatchPage(currentUser: currentUser, likedUser: likedUser),
+          ));
+        }
       }
     }
   }

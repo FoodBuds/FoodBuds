@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:foodbuds0_1/repositories/authentication_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,7 +16,8 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
   String? errorMessage = " ";
 
   bool isPasswordCompliant(String password, [int minLength = 8]) {
@@ -23,7 +25,9 @@ class _RegisterPageState extends State<RegisterPage> {
     bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
     bool hasLowercase = password.contains(RegExp(r'[a-z]'));
     bool hasDigits = password.contains(RegExp(r'[0-9]'));
-    return password.length >= minLength && (hasUppercase || hasLowercase) && hasDigits;
+    return password.length >= minLength &&
+        (hasUppercase || hasLowercase) &&
+        hasDigits;
   }
 
   Future<void> createUserWithEmailAndPassword() async {
@@ -36,7 +40,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (!isPasswordCompliant(_passwordController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Password must be at least 8 characters long and include uppercase, lowercase letters, and numbers.")),
+        SnackBar(
+            content: Text(
+                "Password must be at least 8 characters long and include uppercase, lowercase letters, and numbers.")),
       );
       return;
     }
@@ -54,6 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
         diet: '',
         cuisine: [],
         city: '',
+        birthDate: Timestamp.now(),
       );
       DatabaseRepository().createUser(user);
       Navigator.of(context).push(MaterialPageRoute(

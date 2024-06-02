@@ -32,6 +32,8 @@ class DatabaseRepository {
     return _firebaseFirestore.collection('users').doc(userId).delete();
   }
 
+
+
   Future<String?> uploadFile(File file) async {
     try {
       Reference ref =
@@ -190,6 +192,52 @@ class DatabaseRepository {
         .toList();
     return matchedUserIds;
   }
+
+
+  Future<void> superLikeUser(String superLikerUserId, String superLikedUserId) async {
+    try {
+      String docId = '$superLikerUserId$superLikedUserId';
+      await _firebaseFirestore.collection('super_likes').doc(docId).set({
+        'superLikerUserId': superLikerUserId,
+        'superLikedUserId': superLikedUserId,
+      });
+    } catch (e) {
+      print("Error super liking user: $e");
+      rethrow;
+    }
+  }
+
+  Future<bool> checkForSuperLike(String userId, String superLikedUserId) async {
+    try {
+      DocumentSnapshot doc = await _firebaseFirestore.collection('super_likes').doc('$userId$superLikedUserId').get();
+      return doc.exists;
+    } catch (e) {
+      print("Error checking for super like: $e");
+      return false;
+    }
+  }
+
+  Future<List<User>> getSuperLikedByUsers(String userId) async {
+    try {
+      QuerySnapshot querySnapshot = await _firebaseFirestore.collection('super_likes')
+          .where('superLikedUserId', isEqualTo: userId)
+          .get();
+
+      List<User> superLikedByUsers = [];
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        String superLikerUserId = doc['superLikerUserId'];
+        User? user = await getUserById(superLikerUserId);
+        if (user != null) {
+          superLikedByUsers.add(user);
+        }
+      }
+      return superLikedByUsers;
+    } catch (e) {
+      print("Error fetching super liked by users: $e");
+      return [];
+    }
+  }
+
 
 }
 

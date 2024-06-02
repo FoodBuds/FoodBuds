@@ -52,12 +52,12 @@ class MatchPage extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/user1.jpg'), // Replace with actual image paths
+                    backgroundImage: AssetImage('images/user.png'), // Replace with actual image paths
                   ),
                   SizedBox(width: 20),
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/user2.jpg'), // Replace with actual image paths
+                    backgroundImage: AssetImage('images/user.png'), // Replace with actual image paths
                   ),
                 ],
               ),

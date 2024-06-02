@@ -82,11 +82,6 @@ class _LoginPageState extends State<LoginPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       GestureDetector(
-                        onTap: () {
-                          _emailController.text = "gtarikemre10@gmail.com";
-                          _passwordController.text = "takoemre10";
-                          signInWithEmailAndPassword();
-                        },
                         child: Text(
                           'LOGIN',
                           style: TextStyle(

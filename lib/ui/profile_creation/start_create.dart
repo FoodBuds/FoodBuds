@@ -241,26 +241,73 @@ class _StartCreateState extends State<StartCreate> {
       onTap: () {
         showModalBottomSheet(
           context: context,
+          isScrollControlled: true,
           builder: (BuildContext context) {
-            return Container(
-              height: 400,
-              child: ListView.builder(
-                itemCount: _cities.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(_cities[index]),
-                    onTap: () {
-                      setState(() {
-                        _city = _cities[index];
-                      });
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
+            TextEditingController searchController = TextEditingController();
+            List<String> filteredCities = List.from(_cities);
+
+            return StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                  ),
+                  child: Container(
+                    height: 400,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: TextField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              labelText: 'Search City',
+                              prefixIcon: Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                filteredCities = _cities
+                                    .where((city) => city
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()))
+                                    .toList();
+                              });
+                            },
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: filteredCities.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title: Text(filteredCities[index]),
+                                onTap: () {
+                                  setState(() {
+                                    _city = filteredCities[index];
+                                  });
+                                  Navigator.pop(context, filteredCities[index]);
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             );
           },
-        );
+        ).then((selectedCity) {
+          if (selectedCity != null) {
+            setState(() {
+              _city = selectedCity;
+            });
+          }
+        });
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),

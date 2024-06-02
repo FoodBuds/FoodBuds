@@ -37,45 +37,48 @@ class _ChatPageState extends State<ChatPage> {
         ),
         backgroundColor: Colors.white,
       ),
-      body: StreamBuilder<List<ChatRoom>>(
-        stream: chatRoomsStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            print("object_huso");
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            print('Error: ${snapshot.error}');
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No chat rooms available'));
-          }
-
-          List<ChatRoom> chatRooms = snapshot.data!;
-          return ListView.builder(
-            itemCount: chatRooms.length,
-            itemBuilder: (context, index) {
-              return FutureBuilder<User>(
-                future: _getUserFromChatRoom(chatRooms[index]),
-                builder: (context, userSnapshot) {
-                  if (userSnapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (userSnapshot.hasError) {
-                    return Center(child: Text('Error: ${userSnapshot.error}'));
-                  }
-                  if (!userSnapshot.hasData) {
-                    return Center(child: Text('User data not found'));
-                  }
-
-                  User user = userSnapshot.data!;
-                  return ChatTile(user: user);
-                },
-              );
-            },
-          );
-        },
+      body: Container(
+        color: Colors.white,
+        child: StreamBuilder<List<ChatRoom>>(
+          stream: chatRoomsStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              print("object_huso");
+              return Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              print('Error: ${snapshot.error}');
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No chat rooms available'));
+            }
+        
+            List<ChatRoom> chatRooms = snapshot.data!;
+            return ListView.builder(
+              itemCount: chatRooms.length,
+              itemBuilder: (context, index) {
+                return FutureBuilder<User>(
+                  future: _getUserFromChatRoom(chatRooms[index]),
+                  builder: (context, userSnapshot) {
+                    if (userSnapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (userSnapshot.hasError) {
+                      return Center(child: Text('Error: ${userSnapshot.error}'));
+                    }
+                    if (!userSnapshot.hasData) {
+                      return Center(child: Text('User data not found'));
+                    }
+        
+                    User user = userSnapshot.data!;
+                    return ChatTile(user: user);
+                  },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

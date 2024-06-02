@@ -74,6 +74,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
   List<model.User> _users = [];
   final DatabaseRepository _databaseRepository = DatabaseRepository();
+  bool _isLoading = true;  
 
   @override
   void initState() {
@@ -82,6 +83,10 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
   }
 
   Future<void> _fetchUsers() async {
+    setState(() {
+      _isLoading = true;  
+    });
+    
     List<String> userIds = await _databaseRepository.matchUsers();
     List<model.User> users = [];
     for (String userId in userIds) {
@@ -92,6 +97,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     }
     setState(() {
       _users = users;
+      _isLoading = false;  // End loading
     });
   }
 
@@ -290,133 +296,140 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           ),
         ],
       ),
-      body: _users.isEmpty
+      body: _isLoading 
           ? Container(
-              color: Colors.white, // Change the background color here
-              child: const Center(
-                child: Text(
-                  'No more users',
-                  style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 24), // Adjust text color and size as needed
-                ),
+            color: Colors.white,
+            child: Center(
+                child: CircularProgressIndicator(), // Show loading indicator
               ),
-            )
-          : LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                model.User currentUser = _users.first;
-                String? filePath = currentUser.filePath as String;
-                return Container(
-                  color: Colors.white,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfileDetail(user: currentUser),
-                            ));
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              SizedBox(height: constraints.maxHeight * 0.035),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    filePath, 
-                                    fit: BoxFit.cover,
+          )
+          : _users.isEmpty
+              ? Container(
+                  color: Colors.white, 
+                  child: const Center(
+                    child: Text(
+                      'No more users',
+                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 24),
+                    ),
+                  ),
+                )
+              : LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    model.User currentUser = _users.first;
+                    String? filePath = currentUser.filePath as String;
+                    return Container(
+                      color: Colors.white,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) =>
+                                      ProfileDetail(user: currentUser),
+                                ));
+                              },
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  SizedBox(height: constraints.maxHeight * 0.035),
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(
+                                        filePath, 
+                                        fit: BoxFit.cover,
+                                        width: constraints.maxWidth,
+                                        height: constraints.maxHeight * 0.60,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
                                     width: constraints.maxWidth,
-                                    height: constraints.maxHeight * 0.60,
+                                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.amber,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.5),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: Offset(0, 3),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          '${currentUser.name} ',
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                        Text(
+                                          'Diet:  ${currentUser.diet}',
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical:
+                                    20.0), // Increase the padding to move buttons higher
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                CircleAvatar(
+                                  radius: constraints.maxWidth *
+                                      0.1, // Increase circle avatar size
+                                  backgroundColor: Colors.red,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.clear, color: Colors.white, size: 40),
+                                    onPressed: _swipeLeft,
                                   ),
                                 ),
-                              ),
-                              Container(
-                                width: constraints.maxWidth,
-                                margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Colors.amber,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
+                                CircleAvatar(
+                                  radius: constraints.maxWidth * 0.12, // Increase circle avatar size
+                                  backgroundColor: Colors.blue,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
+                                    onPressed: _showSuperLikeMessage,
+                                  ),
                                 ),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      '${currentUser.name} ${currentUser.surname}',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    ),
-                                    Text(
-                                      'Diet:  ${currentUser.diet}',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20,
-                                      ),
-                                    ),
-                                  ],
+                                CircleAvatar(
+                                  radius: constraints.maxWidth *
+                                      0.1, // Increase circle avatar size
+                                  backgroundColor: Colors.green,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.check, color: Colors.white, size: 40),
+                                    onPressed: _swipeRight,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical:
-                                20.0), // Increase the padding to move buttons higher
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            CircleAvatar(
-                              radius: constraints.maxWidth *
-                                  0.1, // Increase circle avatar size
-                              backgroundColor: Colors.red,
-                              child: IconButton(
-                                icon: const Icon(Icons.clear, color: Colors.white, size: 40),
-                                onPressed: _swipeLeft,
-                              ),
-                            ),
-                            CircleAvatar(
-                              radius: constraints.maxWidth * 0.12, // Increase circle avatar size
-                              backgroundColor: Colors.blue,
-                              child: IconButton(
-                                icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
-                                onPressed: _showSuperLikeMessage,
-                              ),
-                            ),
-                            CircleAvatar(
-                              radius: constraints.maxWidth *
-                                  0.1, // Increase circle avatar size
-                              backgroundColor: Colors.green,
-                              child: IconButton(
-                                icon: const Icon(Icons.check, color: Colors.white, size: 40),
-                                onPressed: _swipeRight,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    );
+                  },
+                ),
     );
   }
 }

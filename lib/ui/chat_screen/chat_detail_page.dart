@@ -97,60 +97,84 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               ));
             },
           ),
-        ],
-      ),
-      body: Container(
-        color: Colors.white,
-        child :Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _messageStream(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                    return Center(child: Text("No messages yet."));
-                  }
-
-                  var messages = snapshot.data!.docs.map((doc) {
-                    return Message(
-                      senderId: doc['senderId'],
-                      senderName: doc['senderName'],
-                      receiverId: doc['receiverId'],
-                      timestamp: doc['timestamp'],
-                      message: doc['message'],
-                    );
-                  }).toList();
-
-                  return ListView.builder(
-                    reverse: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      var message = messages[index];
-                      bool isMe = message.senderId == senderId;
-                      return MessageBubble(
-                        isMe: isMe,
-                        text: message.message,
-                        time: message.timestamp.toDate().toString(),
-                      );
-                    },
-                  );
-                },
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(widget.imageUrl),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: ChatInputField(
-                controller: _controller,
-                onSend: _handleSend,
+              const SizedBox(width: 8),
+              Text(
+                widget.name,
+                style: const TextStyle(color: Colors.black),
               ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.calendar_today, color: Colors.black),
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => RestaurantSelectionPage(
+                      receiverId: widget.receiverId,
+                      name: widget.name,
+                      imageUrl: widget.imageUrl),
+                ));
+              },
             ),
           ],
         ),
-      )
-    );
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Expanded(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _messageStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text("No messages yet."));
+                    }
+
+                    var messages = snapshot.data!.docs.map((doc) {
+                      return Message(
+                        senderId: doc['senderId'],
+                        senderName: doc['senderName'],
+                        receiverId: doc['receiverId'],
+                        timestamp: doc['timestamp'],
+                        message: doc['message'],
+                      );
+                    }).toList();
+
+                    return ListView.builder(
+                      reverse: true,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        var message = messages[index];
+                        bool isMe = message.senderId == senderId;
+                        return MessageBubble(
+                          isMe: isMe,
+                          text: message.message,
+                          time: message.timestamp.toDate().toString(),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: ChatInputField(
+                  controller: _controller,
+                  onSend: _handleSend,
+                ),
+              ),
+            ],
+          ),
+        ));
   }
 }
 
@@ -227,7 +251,8 @@ class ChatInputField extends StatelessWidget {
               ),
               fillColor: Colors.grey[200],
               filled: true,
-              contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
             ),
           ),
         ),
@@ -236,7 +261,7 @@ class ChatInputField extends StatelessWidget {
           width: 70,
           margin: EdgeInsets.symmetric(horizontal: 10.0),
           decoration: BoxDecoration(
-            color: Colors.amber, 
+            color: Colors.amber,
             borderRadius: BorderRadius.circular(30.0),
           ),
           child: IconButton(

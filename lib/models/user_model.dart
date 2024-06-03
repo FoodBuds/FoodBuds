@@ -103,7 +103,6 @@ class User extends Equatable {
   }
 
   static User fromSnapshot(DocumentSnapshot snap) {
-    print("hüso");
     return User(
       id: snap.id,
       name: snap['name'],
@@ -118,5 +117,17 @@ class User extends Equatable {
       city: snap['city'],
       birthDate: snap['birthDate'],
     );
+  }
+
+
+  int getAge() {
+    DateTime tempBirthDate = birthDate.toDate();
+    DateTime today = DateTime.now();
+    int age = today.year - tempBirthDate.year;
+    if (today.month < tempBirthDate.month ||
+        (today.month == tempBirthDate.month && today.day < tempBirthDate.day)) {
+      age--;
+    }
+    return age;
   }
 }

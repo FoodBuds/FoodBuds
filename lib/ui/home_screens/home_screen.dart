@@ -74,7 +74,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
 
   List<model.User> _users = [];
   final DatabaseRepository _databaseRepository = DatabaseRepository();
-  bool _isLoading = true;  
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -82,11 +82,35 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     _fetchUsers();
   }
 
+  Future<void> _superLikeUser(String superLikedUserId) async {
+    String? superLikerUserId = await AuthenticationRepository().getUserId();
+    if (superLikerUserId != null) {
+      await _databaseRepository.superLikeUser(
+          superLikerUserId, superLikedUserId);
+      await _databaseRepository.likeUser(superLikerUserId, superLikedUserId);
+      _showSuperLikeMessage();
+    }
+  }
+
+  void _showSuperLikeMessage() {
+    // Display a message or perform any other action to indicate the super like was successful
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Super Liked!')),
+    );
+
+    // Move to the next user
+    if (_users.isNotEmpty) {
+      setState(() {
+        _users.removeAt(0);
+      });
+    }
+  }
+
   Future<void> _fetchUsers() async {
     setState(() {
-      _isLoading = true;  
+      _isLoading = true;
     });
-    
+
     List<String> userIds = await _databaseRepository.matchUsers();
     List<model.User> users = [];
     for (String userId in userIds) {
@@ -97,7 +121,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     }
     setState(() {
       _users = users;
-      _isLoading = false;  // End loading
+      _isLoading = false;
     });
   }
 
@@ -108,11 +132,15 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
       bool isMatch =
           await _databaseRepository.checkForMatch(likerUserId, likedUserId);
       if (isMatch) {
-        model.User? likedUser = await _databaseRepository.getUserById(likedUserId);
-        model.User? currentUser = await _databaseRepository.getUserById(likerUserId);
+        ChatRepository().createMessageRoom(likedUserId);
+        model.User? likedUser =
+            await _databaseRepository.getUserById(likedUserId);
+        model.User? currentUser =
+            await _databaseRepository.getUserById(likerUserId);
         if (likedUser != null && currentUser != null) {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => MatchPage(currentUser: currentUser, likedUser: likedUser),
+            builder: (context) =>
+                MatchPage(currentUser: currentUser, likedUser: likedUser),
           ));
         }
       }
@@ -199,7 +227,7 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                _fetchUsers(); 
+                _fetchUsers();
               },
               child: const Text('Cancel'),
             ),
@@ -249,15 +277,6 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
     );
   }
 
-  void _showSuperLikeMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Super like sent'),
-        duration: Duration(seconds: 1),
-      ),
-    );
-  }
-
   void _swipeLeft() {
     if (_users.isNotEmpty) {
       String dislikedUserId = _users.first.id!;
@@ -285,7 +304,8 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
         automaticallyImplyLeading: false,
         title: const Text(
           '    Home',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
         ),
         backgroundColor: Colors.white,
         actions: [
@@ -299,27 +319,28 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           ),
         ],
       ),
-      body: _isLoading 
+      body: _isLoading
           ? Container(
-            color: Colors.white,
-            child: Center(
-                child: CircularProgressIndicator(), 
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(), // Show loading indicator
               ),
-          )
+            )
           : _users.isEmpty
               ? Container(
-                  color: Colors.white, 
+                  color: Colors.white,
                   child: const Center(
                     child: Text(
                       'No more users',
-                      style: TextStyle(color: Color.fromARGB(255, 0, 0, 0), fontSize: 24),
+                      style: TextStyle(
+                          color: Color.fromARGB(255, 0, 0, 0), fontSize: 24),
                     ),
                   ),
                 )
               : LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
                     model.User currentUser = _users.first;
-                    String? filePath = currentUser.filePath as String;
+                    String? filePath = currentUser.filePath;
                     return Container(
                       color: Colors.white,
                       child: Column(
@@ -336,47 +357,79 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
-                                  SizedBox(height: constraints.maxHeight * 0.035),
+                                  SizedBox(
+                                      height: constraints.maxHeight * 0.035),
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    child: Stack( 
-                                      children: [ 
+                                    child: Stack(
+                                      children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(20),
-                                          child: Image.network(
-                                            filePath, 
-                                            fit: BoxFit.cover,
-                                            width: constraints.maxWidth,
-                                            height: constraints.maxHeight * 0.60,
-                                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              } else {
-                                                return Container(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          child: filePath != null
+                                              ? Image.network(
+                                                  filePath,
+                                                  fit: BoxFit.cover,
                                                   width: constraints.maxWidth,
-                                                  height: constraints.maxHeight * 0.60,
-                                                  child: Center(
-                                                    child: CircularProgressIndicator(
-                                                      value: loadingProgress.expectedTotalBytes != null
-                                                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                                          : null,
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-                                            },
-                                          ),
-                                      ),
-                                    ],
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          0.60,
+                                                  loadingBuilder:
+                                                      (BuildContext context,
+                                                          Widget child,
+                                                          ImageChunkEvent?
+                                                              loadingProgress) {
+                                                    if (loadingProgress ==
+                                                        null) {
+                                                      return child;
+                                                    } else {
+                                                      return Container(
+                                                        width: constraints
+                                                            .maxWidth,
+                                                        height: constraints
+                                                                .maxHeight *
+                                                            0.60,
+                                                        child: Center(
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            value: loadingProgress
+                                                                        .expectedTotalBytes !=
+                                                                    null
+                                                                ? loadingProgress
+                                                                        .cumulativeBytesLoaded /
+                                                                    loadingProgress
+                                                                        .expectedTotalBytes!
+                                                                : null,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                )
+                                              : Container(
+                                                  width: constraints.maxWidth,
+                                                  height:
+                                                      constraints.maxHeight *
+                                                          0.60,
+                                                  color: Colors.grey[300],
+                                                  child: Icon(Icons.person,
+                                                      size: constraints
+                                                              .maxHeight *
+                                                          0.3),
+                                                ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   Container(
                                     width: constraints.maxWidth,
-                                    margin: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                    margin:
+                                        const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
                                       color: Colors.amber,
@@ -394,10 +447,9 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                                         Text(
                                           '${currentUser.name} ',
                                           style: const TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold
-                                          ),
+                                              color: Colors.black,
+                                              fontSize: 30,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                         Text(
                                           'Diet:  ${currentUser.diet}',
@@ -415,31 +467,42 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 20.0),
+                                vertical:
+                                    20.0), // Increase the padding to move buttons higher
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 CircleAvatar(
-                                  radius: constraints.maxWidth * 0.1,
+                                  radius: constraints.maxWidth *
+                                      0.1, // Increase circle avatar size
                                   backgroundColor: Colors.red,
                                   child: IconButton(
-                                    icon: const Icon(Icons.clear, color: Colors.white, size: 40),
+                                    icon: const Icon(Icons.clear,
+                                        color: Colors.white, size: 40),
                                     onPressed: _swipeLeft,
                                   ),
                                 ),
                                 CircleAvatar(
-                                  radius: constraints.maxWidth * 0.12,
+                                  radius: constraints.maxWidth *
+                                      0.12, // Increase circle avatar size
                                   backgroundColor: Colors.blue,
                                   child: IconButton(
-                                    icon: const Icon(Icons.favorite, color: Colors.white, size: 60),
-                                    onPressed: _showSuperLikeMessage,
+                                    icon: const Icon(Icons.favorite,
+                                        color: Colors.white, size: 60),
+                                    onPressed: () {
+                                      String superLikedUserId =
+                                          _users.first.id!;
+                                      _superLikeUser(superLikedUserId);
+                                    },
                                   ),
                                 ),
                                 CircleAvatar(
-                                  radius: constraints.maxWidth * 0.1,
+                                  radius: constraints.maxWidth *
+                                      0.1, // Increase circle avatar size
                                   backgroundColor: Colors.green,
                                   child: IconButton(
-                                    icon: const Icon(Icons.check, color: Colors.white, size: 40),
+                                    icon: const Icon(Icons.check,
+                                        color: Colors.white, size: 40),
                                     onPressed: _swipeRight,
                                   ),
                                 ),

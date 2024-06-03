@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:foodbuds0_1/models/models.dart' as model;
@@ -28,9 +29,11 @@ class _ProfilePageState extends State<ProfilePage> {
   String city = 'Istanbul';
   List<String> cuisine = [];
   String filePath = "";
+  Timestamp birthDate = Timestamp.fromDate(DateTime(2000, 1, 1));
   bool isEditing = false;
   bool isEditingPlan = false;
   int _selectedSubscriptionIndex = -1;
+  int age = 0;
 
   File? _profileImage;
   bool _isImageUploading = false;
@@ -64,6 +67,8 @@ class _ProfilePageState extends State<ProfilePage> {
           diet = user.diet.toString().split('.').last;
           cuisine = user.cuisine;
           filePath = user.filePath as String;
+          birthDate = user.birthDate;
+          age = user.getAge(); 
         });
       }
     } catch (e) {
@@ -142,6 +147,70 @@ class _ProfilePageState extends State<ProfilePage> {
           _isImageUploading = false; // Hide loading indicator
         });
       }
+    }
+  }
+
+  Future<void> _confirmLogout() async {
+    bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to logout?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Logout'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      AuthenticationRepository().signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const FirstScreen()),
+      );
+    }
+  }
+
+  Future<void> _confirmDeleteAccount() async {
+    bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+            ),
+            TextButton(
+              child: Text('Delete'),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed == true) {
+      await deleteUser();
     }
   }
 
@@ -344,16 +413,16 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   final List<String> cities = [
-    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara', 
-    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman', 
-    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale', 
-    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ', 
-    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari', 
-    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük', 
-    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir', 
-    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin', 
-    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun', 
-    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon', 
+    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
+    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman',
+    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale',
+    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ',
+    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari',
+    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük',
+    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir',
+    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin',
+    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun',
+    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon',
     'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
   ];
 
@@ -383,8 +452,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           filteredCities = cities
                               .where((city) => city
-                                  .toLowerCase()
-                                  .contains(value.toLowerCase()))
+                              .toLowerCase()
+                              .contains(value.toLowerCase()))
                               .toList();
                         });
                       },
@@ -564,8 +633,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: const Text('Save'),
                   onPressed: selected.isNotEmpty
                       ? () {
-                          Navigator.pop(context, selected);
-                        }
+                    Navigator.pop(context, selected);
+                  }
                       : null,
                 ),
               ],
@@ -600,6 +669,7 @@ class _ProfilePageState extends State<ProfilePage> {
           'cuisine': cuisine,
           'filePath': filePath,
           'city': city,
+          'birthDate': birthDate,
         };
         await _databaseRepo.updateUser(updatedData);
         setState(() {
@@ -637,151 +707,149 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Colors.amber,
         title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              if (value == 'logout') {
+                _confirmLogout();
+              } else if (value == 'delete_account') {
+                _confirmDeleteAccount();
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Text('Logout'),
+                ),
+                PopupMenuItem<String>(
+                  value: 'delete_account',
+                  child: Text('Delete Account'),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.amber,
               child: Column(
                 children: [
-                  Container(
-                    color: Colors.amber,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: LoadingCircleAvatar(
-                            isLoading: _isImageUploading,
-                            backgroundImage: _profileImage != null
-                                ? FileImage(_profileImage!)
-                                : (filePath.isNotEmpty
-                                    ? (filePath.startsWith('http')
-                                        ? NetworkImage(filePath)
-                                        : FileImage(File(filePath)))
-                                    : AssetImage('images/default_profile.png'))
-                                as ImageProvider,
-                            radius: 50,
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: LoadingCircleAvatar(
+                      isLoading: _isImageUploading,
+                      backgroundImage: _profileImage != null
+                          ? FileImage(_profileImage!)
+                          : (filePath.isNotEmpty
+                          ? (filePath.startsWith('http')
+                          ? NetworkImage(filePath)
+                          : FileImage(File(filePath)))
+                          : AssetImage('images/default_profile.png'))
+                      as ImageProvider,
+                      radius: 50,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('$name', style: TextStyle(color: Colors.white, fontSize: 20)),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: [
+                  ProfileSection(
+                    title: 'Account Settings',
+                    isEditable: true,
+                    onEdit: () {
+                      setState(() {
+                        isEditing = !isEditing;
+                      });
+                    },
+                    children: [
+                      isEditing
+                          ? ProfileEditableField(
+                        label: 'Name',
+                        value: name,
+                        onChanged: (value) {
+                          setState(() {
+                            name = value;
+                          });
+                        },
+                      )
+                          : ProfileDisplayField(label: 'Name', value: name),
+                      ProfileDisplayField(label: 'Email', value: email),
+                      isEditing
+                          ? ProfileEditableField(
+                        label: 'Bio',
+                        value: _bioController.text,
+                        onChanged: (value) {
+                          setState(() {
+                            _bioController.text = value;
+                          });
+                        },
+                      )
+                          : ProfileDisplayField(label: 'Bio', value: bio),
+                      ProfileDisplayField(label: 'Age', value: age.toString()),
+                      if (isEditing)
+                        ElevatedButton(
+                          onPressed: _validateAndSave,
+                          child: Text('Save'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.amber,
+                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            side: BorderSide(color: Colors.amber),
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text('$name', style: TextStyle(color: Colors.white, fontSize: 20)),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                    ],
                   ),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        ProfileSection(
-                          title: 'Account Settings',
-                          isEditable: true,
-                          onEdit: () {
-                            setState(() {
-                              isEditing = !isEditing;
-                            });
-                          },
-                          children: [
-                            isEditing
-                                ? ProfileEditableField(
-                                    label: 'Name',
-                                    value: name,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        name = value;
-                                      });
-                                    },
-                                  )
-                                : ProfileDisplayField(label: 'Name', value: name),
-                            ProfileDisplayField(label: 'Email', value: email),
-                            isEditing
-                                ? ProfileEditableField(
-                                    label: 'Bio',
-                                    value: _bioController.text,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _bioController.text = value;
-                                      });
-                                    },
-                                  )
-                                : ProfileDisplayField(label: 'Bio', value: bio),
-                            if (isEditing)
-                              ElevatedButton(
-                                onPressed: _validateAndSave,
-                                child: Text('Save'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: Colors.amber,
-                                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  side: BorderSide(color: Colors.amber),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const Divider(thickness: 1),
-                        ProfileSection(
-                          title: 'Plan Settings',
-                          isEditable: true,
-                          onEdit: _editPlanSettings,
-                          children: [
-                            isEditingPlan
-                                ? ProfileEditableField(
-                                    label: 'Current Plan',
-                                    value: currentPlan,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        currentPlan = value;
-                                      });
-                                    },
-                                  )
-                                : ProfileDisplayField(label: 'Current Plan', value: currentPlan, isEditable: false),
-                        ],
-                      ),
-                      const Divider(thickness: 1),
-                        ProfileSection(
-                          title: 'Discovery Settings',
-                          children: [
-                            ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
-                            ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
-                            ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
-                            ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine),
-                          ],
-                        ),
-                      ],
-                    ),
+                  const Divider(thickness: 1),
+                  ProfileSection(
+                    title: 'Plan Settings',
+                    isEditable: true,
+                    onEdit: _editPlanSettings,
+                    children: [
+                      isEditingPlan
+                          ? ProfileEditableField(
+                        label: 'Current Plan',
+                        value: currentPlan,
+                        onChanged: (value) {
+                          setState(() {
+                            currentPlan = value;
+                          });
+                        },
+                      )
+                          : ProfileDisplayField(label: 'Current Plan', value: currentPlan, isEditable: false),
+                    ],
                   ),
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        const Divider(thickness: 1),
-                        ElevatedButton(
-                          onPressed: () {
-                            AuthenticationRepository().signOut();
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const FirstScreen()),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                          child: const Text('Logout'),
-                        ),
-                        const SizedBox(height: 8), // Added space between buttons
-                        ElevatedButton(
-                          onPressed: () async => deleteUser(),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                          child: const Text('Delete Account'),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ),
+                  const Divider(thickness: 1),
+                  ProfileSection(
+                    title: 'Discovery Settings',
+                    children: [
+                      ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
+                      ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
+                      ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
+                      ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine), // Displaying age
+                    ],
                   ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -847,7 +915,7 @@ class ProfileSection extends StatelessWidget {
                 TextButton(
                   onPressed: onEdit,
                   child:
-                      const Text('Edit', style: TextStyle(color: Colors.blue)),
+                  const Text('Edit', style: TextStyle(color: Colors.blue)),
                 ),
             ],
           ),
@@ -918,7 +986,7 @@ class ProfileEditableField extends StatelessWidget {
         decoration: InputDecoration(
           border: UnderlineInputBorder(),
           focusedBorder:
-              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         ),
       ),
     );

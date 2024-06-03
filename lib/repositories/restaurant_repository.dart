@@ -8,7 +8,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Turkish',
       rating: '4.5',
-      filePath: 'images/user.png',
+      filePath: 'images/lezzet_duragi.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -17,7 +17,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Italian',
       rating: '4.7',
-      filePath: 'images/user.png',
+      filePath: 'images/pasta_e_basta.jpg',
       closingHour: '22:00',
     ),
     const Restaurant(
@@ -26,7 +26,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'French',
       rating: '4.6',
-      filePath: 'images/user.png',
+      filePath: 'images/bistro_de_paris.jpg',
       closingHour: '23:30',
     ),
     const Restaurant(
@@ -35,7 +35,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Chinese',
       rating: '4.4',
-      filePath: 'images/user.png',
+      filePath: 'images/dragon_wok.jpg',
       closingHour: '22:30',
     ),
     const Restaurant(
@@ -44,7 +44,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Japanese',
       rating: '4.8',
-      filePath: 'images/user.png',
+      filePath: 'images/sushi_world.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -53,7 +53,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Indian',
       rating: '4.3',
-      filePath: 'images/user.png',
+      filePath: 'images/curry_house.jpg',
       closingHour: '22:00',
     ),
     const Restaurant(
@@ -62,7 +62,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Mexican',
       rating: '4.5',
-      filePath: 'images/user.png',
+      filePath: 'images/el_ranchero.jpg',
       closingHour: '23:30',
     ),
     const Restaurant(
@@ -71,7 +71,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Spanish',
       rating: '4.6',
-      filePath: null,
+      filePath: 'images/tapas_bar.jpg',
       closingHour: '22:30',
     ),
     const Restaurant(
@@ -80,7 +80,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Thai',
       rating: '4.7',
-      filePath: null,
+      filePath: 'images/thai_garden.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -89,7 +89,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'American',
       rating: '4.4',
-      filePath: null,
+      filePath: 'images/burger_joint.jpg',
       closingHour: '22:00',
     ),
     const Restaurant(
@@ -98,7 +98,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Turkish',
       rating: '4.5',
-      filePath: null,
+      filePath: 'images/kebapci_ahmet.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -107,7 +107,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Italian',
       rating: '4.6',
-      filePath: null,
+      filePath: 'images/la_trattoria.jpg',
       closingHour: '22:00',
     ),
     const Restaurant(
@@ -116,7 +116,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'French',
       rating: '4.7',
-      filePath: null,
+      filePath: 'images/le_petit_bistro.jpg',
       closingHour: '23:30',
     ),
     const Restaurant(
@@ -125,7 +125,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Chinese',
       rating: '4.4',
-      filePath: null,
+      filePath: 'images/peking_express.jpg',
       closingHour: '22:30',
     ),
     const Restaurant(
@@ -134,7 +134,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Japanese',
       rating: '4.8',
-      filePath: null,
+      filePath: 'images/sakura_sushi.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -143,7 +143,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Indian',
       rating: '4.3',
-      filePath: null,
+      filePath: 'images/spice_route.jpg',
       closingHour: '22:00',
     ),
     const Restaurant(
@@ -152,7 +152,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Mexican',
       rating: '4.5',
-      filePath: null,
+      filePath: 'images/cantina_mexicana.jpg',
       closingHour: '23:30',
     ),
     const Restaurant(
@@ -161,7 +161,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'Spanish',
       rating: '4.6',
-      filePath: null,
+      filePath: 'images/casa_de_tapas.jpg',
       closingHour: '22:30',
     ),
     const Restaurant(
@@ -170,7 +170,7 @@ class RestaurantRepository {
       location: 'İzmir',
       cuisineType: 'Thai',
       rating: '4.7',
-      filePath: null,
+      filePath: 'images/bangkok_bites.jpg',
       closingHour: '23:00',
     ),
     const Restaurant(
@@ -179,7 +179,7 @@ class RestaurantRepository {
       location: 'İstanbul',
       cuisineType: 'American',
       rating: '4.4',
-      filePath: null,
+      filePath: 'images/big_apple_diner.jpg',
       closingHour: '22:00',
     ),
   ];

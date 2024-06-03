@@ -103,7 +103,6 @@ class User extends Equatable {
   }
 
   static User fromSnapshot(DocumentSnapshot snap) {
-    print("hüso");
     return User(
       id: snap.id,
       name: snap['name'],

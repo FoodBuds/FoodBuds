@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodbuds0_1/ui/authentication_screen/authentication_screen.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:foodbuds0_1/models/models.dart' as model;
@@ -28,9 +29,11 @@ class _ProfilePageState extends State<ProfilePage> {
   String city = 'Istanbul';
   List<String> cuisine = [];
   String filePath = "";
+  Timestamp birthDate = Timestamp.fromDate(DateTime(2000, 1, 1));
   bool isEditing = false;
   bool isEditingPlan = false;
   int _selectedSubscriptionIndex = -1;
+  int age = 0;
 
   File? _profileImage;
   bool _isImageUploading = false;
@@ -64,6 +67,8 @@ class _ProfilePageState extends State<ProfilePage> {
           diet = user.diet.toString().split('.').last;
           cuisine = user.cuisine;
           filePath = user.filePath as String;
+          birthDate = user.birthDate;
+          age = user.getAge(); 
         });
       }
     } catch (e) {
@@ -664,6 +669,7 @@ class _ProfilePageState extends State<ProfilePage> {
           'cuisine': cuisine,
           'filePath': filePath,
           'city': city,
+          'birthDate': birthDate,
         };
         await _databaseRepo.updateUser(updatedData);
         setState(() {
@@ -792,6 +798,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       )
                           : ProfileDisplayField(label: 'Bio', value: bio),
+                      ProfileDisplayField(label: 'Age', value: age.toString()),
                       if (isEditing)
                         ElevatedButton(
                           onPressed: _validateAndSave,
@@ -834,7 +841,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
                       ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
                       ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
-                      ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine),
+                      ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine), // Displaying age
                     ],
                   ),
                 ],

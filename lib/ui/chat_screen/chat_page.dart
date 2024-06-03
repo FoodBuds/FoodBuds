@@ -43,7 +43,6 @@ class _ChatPageState extends State<ChatPage> {
           stream: chatRoomsStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print("object_huso");
               return Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {

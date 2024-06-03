@@ -81,12 +81,6 @@ class _LikePageState extends State<LikePage> {
                     color: Colors.black.withOpacity(0.5),
                     colorBlendMode: BlendMode.darken,
                   ),
-                  Center(
-                    child: Text(
-                      user.name,
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 24),
-                    ),
-                  ),
                 ],
               ),
             );

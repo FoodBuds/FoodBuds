@@ -64,7 +64,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           backgroundColor: Colors.white,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            ),
           ),
           title: Row(
             children: [

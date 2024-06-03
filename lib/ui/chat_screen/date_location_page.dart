@@ -59,6 +59,9 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                             decoration: BoxDecoration(
                               color: Colors.amber,
                               borderRadius: BorderRadius.circular(10),
+                              border: selectedRestaurant == restaurant
+                                  ? Border.all(color: Colors.black, width: 2)
+                                  : null,
                             ),
                             margin: EdgeInsets.symmetric(vertical: 8.0),
                             padding: EdgeInsets.all(16.0),

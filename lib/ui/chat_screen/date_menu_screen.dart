@@ -25,97 +25,99 @@ class DateMenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Image.asset(
-                restaurant.filePath ??
-                    'images/American.png', // Default image if none provided
-                height: 200,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              restaurant.restaurantName ?? 'Default Location Name',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.star, color: Colors.yellow[700], size: 30),
-                Icon(Icons.star, color: Colors.yellow[700], size: 30),
-                Icon(Icons.star, color: Colors.yellow[700], size: 30),
-                Icon(Icons.star, color: Colors.yellow[700], size: 30),
-                Icon(Icons.star_border, color: Colors.yellow[700], size: 30),
-              ],
-            ),
-            SizedBox(height: 10),
-            if (restaurant.closingHour != null) ...[
+      appBar: AppBar(
+            leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+          ),
+        backgroundColor: Colors.white,
+        title: const Text(
+          '    Ask For Date',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28),
+        ), 
+      ),
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [ // Adds space above the image
               Container(
-                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.circular(15.0),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Icon(Icons.access_time, color: Colors.black),
-                    SizedBox(width: 5),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: Image.asset(
+                        restaurant.filePath ?? 'images/default.png',
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    SizedBox(height: 20),
                     Text(
-                      'Closed at: ${restaurant.closingHour}',
-                      style: TextStyle(color: Colors.amber),
+                      restaurant.restaurantName ?? 'Default Restaurant Name',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      '${restaurant.cuisineType} - Rating: ${restaurant.rating} ⭐',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    Text(
+                      'Location: ${restaurant.location}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      'Closes at: ${restaurant.closingHour}',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                      ),
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 20),
-            ],
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.amber),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                'A default description of the location.',
-                style: TextStyle(color: Colors.amber),
-              ),
-            ),
-            Spacer(),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black, // Background color
+                  foregroundColor: Colors.white, // Text color
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
-                side: BorderSide(color: Colors.amber),
+                onPressed: () {
+                  sendDateMessage();
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ChatDetailPage(
+                        name: name, imageUrl: imageUrl, receiverId: receiverId),
+                  ));
+                },
+                child: Text(
+                  'ASK FOR A DATE',
+                  style: TextStyle(fontSize: 18),
+                ),
               ),
-              onPressed: () {
-                sendDateMessage();
-                Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ChatDetailPage(
-                      name: name, imageUrl: imageUrl, receiverId: receiverId),
-                ));
-              },
-              child: Text(
-                'ASK FOR A DATE',
-                style: TextStyle(fontSize: 18, color: Colors.amber),
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
+              SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

@@ -43,7 +43,6 @@ class _ChatPageState extends State<ChatPage> {
           stream: chatRoomsStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              print("object_huso");
               return Center(child: CircularProgressIndicator());
             }
             if (snapshot.hasError) {
@@ -101,7 +100,7 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(6.0),
       decoration: BoxDecoration(
         color: Colors.amber,
         borderRadius: BorderRadius.circular(15.0),
@@ -116,13 +115,15 @@ class ChatTile extends StatelessWidget {
         ),
         title: Text(
           user.name,
-          style: const TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
         ),
         subtitle: const Text(
           "message",
-          style: TextStyle(color: Colors.grey),
+          style: TextStyle(color: Color.fromARGB(255, 53, 53, 53)),
         ),
-        trailing: const Text("time"),
+        trailing: const Text("time",
+            style: TextStyle(color: Color.fromARGB(255, 31, 31, 31)),
+        ),
         onTap: () {
           Navigator.push(
             context,

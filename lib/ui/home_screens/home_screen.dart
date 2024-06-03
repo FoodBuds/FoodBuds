@@ -89,6 +89,21 @@ class _HomeScreenContentState extends State<HomeScreenContent> {
           superLikerUserId, superLikedUserId);
       await _databaseRepository.likeUser(superLikerUserId, superLikedUserId);
       _showSuperLikeMessage();
+      bool isMatch = await _databaseRepository.checkForMatch(
+          superLikerUserId, superLikedUserId);
+      if (isMatch) {
+        ChatRepository().createMessageRoom(superLikedUserId);
+        model.User? likedUser =
+            await _databaseRepository.getUserById(superLikedUserId);
+        model.User? currentUser =
+            await _databaseRepository.getUserById(superLikerUserId);
+        if (likedUser != null && currentUser != null) {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                MatchPage(currentUser: currentUser, likedUser: likedUser),
+          ));
+        }
+      }
     }
   }
 

@@ -137,7 +137,7 @@ class DatabaseRepository {
 
     QuerySnapshot querySnapshot;
 
-    if (currentUser.genderPreference == 'everyone') {
+    if (currentUser.genderPreference == 'Everyone') {
       querySnapshot =
           await FirebaseFirestore.instance.collection('users').get();
     } else {

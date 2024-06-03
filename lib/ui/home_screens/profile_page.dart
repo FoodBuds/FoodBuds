@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
           cuisine = user.cuisine;
           filePath = user.filePath as String;
           birthDate = user.birthDate;
-          age = user.getAge(); 
+          age = user.getAge();
         });
       }
     } catch (e) {
@@ -811,52 +811,25 @@ class _ProfilePageState extends State<ProfilePage> {
           : SingleChildScrollView(
               child: Column(
                 children: [
-
-                  ProfileSection(
-                    title: 'Account Settings',
-                    isEditable: true,
-                    onEdit: () {
-                      setState(() {
-                        isEditing = !isEditing;
-                      });
-                    },
-                    children: [
-                      isEditing
-                          ? ProfileEditableField(
-                        label: 'Name',
-                        value: name,
-                        onChanged: (value) {
-                          setState(() {
-                            name = value;
-                          });
-                        },
-                      )
-                          : ProfileDisplayField(label: 'Name', value: name),
-                      ProfileDisplayField(label: 'Email', value: email),
-                      isEditing
-                          ? ProfileEditableField(
-                        label: 'Bio',
-                        value: _bioController.text,
-                        onChanged: (value) {
-                          setState(() {
-                            _bioController.text = value;
-                          });
-                        },
-                      )
-                          : ProfileDisplayField(label: 'Bio', value: bio),
-                      ProfileDisplayField(label: 'Age', value: age.toString()),
-                      if (isEditing)
-                        ElevatedButton(
-                          onPressed: _validateAndSave,
-                          child: Text('Save'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.amber,
-                            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            side: BorderSide(color: Colors.amber),
+                  Container(
+                    color: Colors.amber,
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: LoadingCircleAvatar(
+                            isLoading: _isImageUploading,
+                            backgroundImage: _profileImage != null
+                                ? FileImage(_profileImage!)
+                                : (filePath.isNotEmpty
+                                        ? (filePath.startsWith('http')
+                                            ? NetworkImage(filePath)
+                                            : FileImage(File(filePath)))
+                                        : AssetImage(
+                                            'images/default_profile.png'))
+                                    as ImageProvider,
+                            radius: 50,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -867,15 +840,104 @@ class _ProfilePageState extends State<ProfilePage> {
                       ],
                     ),
                   ),
-                  const Divider(thickness: 1),
-                  ProfileSection(
-                    title: 'Discovery Settings',
-                    children: [
-                      ProfileDisplayField(label: 'City', value: city, onTap: _changeCity),
-                      ProfileDisplayField(label: 'Diet', value: diet, onTap: _changeDiet),
-                      ProfileDisplayField(label: 'Show Me', value: genderPreference, onTap: _changeShowMeOption),
-                      ProfileDisplayField(label: 'Cuisine', value: cuisine.join(', '), onTap: _changeCuisine), // Displaying age
-                    ],
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        ProfileSection(
+                          title: 'Account Settings',
+                          isEditable: true,
+                          onEdit: () {
+                            setState(() {
+                              isEditing = !isEditing;
+                            });
+                          },
+                          children: [
+                            isEditing
+                                ? ProfileEditableField(
+                                    label: 'Name',
+                                    value: name,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        name = value;
+                                      });
+                                    },
+                                  )
+                                : ProfileDisplayField(
+                                    label: 'Name', value: name),
+                            ProfileDisplayField(label: 'Email', value: email),
+                            isEditing
+                                ? ProfileEditableField(
+                                    label: 'Bio',
+                                    value: _bioController.text,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _bioController.text = value;
+                                      });
+                                    },
+                                  )
+                                : ProfileDisplayField(label: 'Bio', value: bio),
+                            ProfileDisplayField(
+                                label: 'Age', value: age.toString()),
+                            if (isEditing)
+                              ElevatedButton(
+                                onPressed: _validateAndSave,
+                                child: Text('Save'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.white,
+                                  foregroundColor: Colors.amber,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 50),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  side: BorderSide(color: Colors.amber),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Divider(thickness: 1),
+                        ProfileSection(
+                          title: 'Plan Settings',
+                          isEditable: true,
+                          onEdit: _editPlanSettings,
+                          children: [
+                            isEditingPlan
+                                ? ProfileEditableField(
+                                    label: 'Current Plan',
+                                    value: currentPlan,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        currentPlan = value;
+                                      });
+                                    },
+                                  )
+                                : ProfileDisplayField(
+                                    label: 'Current Plan',
+                                    value: currentPlan,
+                                    isEditable: false),
+                          ],
+                        ),
+                        const Divider(thickness: 1),
+                        ProfileSection(
+                          title: 'Discovery Settings',
+                          children: [
+                            ProfileDisplayField(
+                                label: 'City', value: city, onTap: _changeCity),
+                            ProfileDisplayField(
+                                label: 'Diet', value: diet, onTap: _changeDiet),
+                            ProfileDisplayField(
+                                label: 'Show Me',
+                                value: genderPreference,
+                                onTap: _changeShowMeOption),
+                            ProfileDisplayField(
+                                label: 'Cuisine',
+                                value: cuisine.join(', '),
+                                onTap: _changeCuisine), // Displaying age
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

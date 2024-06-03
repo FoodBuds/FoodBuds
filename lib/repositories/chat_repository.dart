@@ -35,25 +35,24 @@ class ChatRepository extends ChangeNotifier {
         .add(newMessage.toMap());
   }
 
-  Future<void> sendDatingMessage(
-      String receiverId, Restaurant restaurant) async {
+  Future<void> sendDatingMessage(String receiverId, Restaurant restaurant) async {
     final String? currentUserId = await AuthenticationRepository().getUserId();
     final User currentUserData =
         await DatabaseRepository().getUser(currentUserId as String).first;
     final String currentUserName = currentUserData.name;
     final Timestamp timestamp = Timestamp.now();
 
-    Message newMessage = RestaurantMessage(
+    RestaurantMessage newMessage = RestaurantMessage(
       senderId: currentUserId,
       senderName: currentUserName,
       receiverId: receiverId,
       timestamp: timestamp,
-      message: "",
+      message: "Hey! I want to go on a date with you at ${restaurant.restaurantName}",
       restaurantName: restaurant.restaurantName,
       location: restaurant.location,
       cuisineType: restaurant.cuisineType,
       rating: restaurant.rating,
-      filePath: restaurant.filePath as String,
+      filePath: restaurant.filePath ?? 'images/default_restaurant.png',
       closingHour: restaurant.closingHour,
     );
 

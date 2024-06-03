@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:foodbuds0_1/models/restaurant_message.dart';
 import 'package:foodbuds0_1/ui/chat_screen/chat_screens.dart';
 import 'package:foodbuds0_1/repositories/repositories.dart';
 import 'package:foodbuds0_1/models/models.dart';
@@ -122,13 +123,39 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     }
 
                     var messages = snapshot.data!.docs.map((doc) {
-                      return Message(
-                        senderId: doc['senderId'],
-                        senderName: doc['senderName'],
-                        receiverId: doc['receiverId'],
-                        timestamp: doc['timestamp'],
-                        message: doc['message'],
-                      );
+                      try {
+                        if (doc['restaurantName'] != null) {
+                          return RestaurantMessage(
+                            senderId: doc['senderId'],
+                            senderName: doc['senderName'],
+                            receiverId: doc['receiverId'],
+                            timestamp: doc['timestamp'],
+                            message: doc['message'],
+                            restaurantName: doc['restaurantName'],
+                            location: doc['location'],
+                            cuisineType: doc['cuisineType'],
+                            rating: doc['rating'],
+                            filePath: doc['filePath'],
+                            closingHour: doc['closingHour'],
+                          );
+                        } else {
+                          return Message(
+                            senderId: doc['senderId'],
+                            senderName: doc['senderName'],
+                            receiverId: doc['receiverId'],
+                            timestamp: doc['timestamp'],
+                            message: doc['message'],
+                          );
+                        }
+                      } catch (e) {
+                        return Message(
+                          senderId: doc['senderId'],
+                          senderName: doc['senderName'],
+                          receiverId: doc['receiverId'],
+                          timestamp: doc['timestamp'],
+                          message: doc['message'],
+                        );
+                      }
                     }).toList();
 
                     return ListView.builder(
@@ -137,11 +164,28 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       itemBuilder: (context, index) {
                         var message = messages[index];
                         bool isMe = message.senderId == senderId;
-                        return MessageBubble(
-                          isMe: isMe,
-                          text: message.message,
-                          time: message.timestamp.toDate().toString(),
-                        );
+                        if (message is RestaurantMessage) {
+                          return MessageBubble(
+                            isMe: isMe,
+                            text: message.message,
+                            time: message.timestamp.toDate().toString(),
+                            isRestaurantMessage: true,
+                            restaurant: Restaurant(
+                              restaurantName: message.restaurantName,
+                              location: message.location,
+                              cuisineType: message.cuisineType,
+                              rating: message.rating,
+                              filePath: message.filePath,
+                              closingHour: message.closingHour,
+                            ),
+                          );
+                        } else {
+                          return MessageBubble(
+                            isMe: isMe,
+                            text: message.message,
+                            time: message.timestamp.toDate().toString(),
+                          );
+                        }
                       },
                     );
                   },
@@ -165,49 +209,117 @@ class MessageBubble extends StatelessWidget {
   final bool isMe;
   final String text;
   final String time;
-  final bool isHighlighted;
+  final bool isRestaurantMessage;
+  final Restaurant? restaurant;
 
   const MessageBubble({
     required this.isMe,
     required this.text,
     required this.time,
-    this.isHighlighted = false,
+    this.isRestaurantMessage = false,
+    this.restaurant,
   });
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
+        width: screenWidth * 0.75,
         margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8.0),
-        padding: const EdgeInsets.all(12.0),
+        padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           color: isMe ? Colors.amber : Colors.grey[200],
           borderRadius: BorderRadius.circular(15.0),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              text,
-              style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
+        child: isRestaurantMessage && restaurant != null
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    restaurant!.restaurantName,
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Image.asset(
+                    restaurant!.filePath ?? 'images/default_restaurant.png',
+                    height: 150,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Location: ${restaurant!.location}',
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Cuisine: ${restaurant!.cuisineType}',
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Rating: ${restaurant!.rating}',
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    'Closing Hour: ${restaurant!.closingHour}',
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    time.split(' ')[1].substring(0, 5),
+                    style: const TextStyle(
+                      fontSize: 10.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: isMe ? Colors.black : Colors.black,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  const SizedBox(height: 4.0),
+                  Text(
+                    time.split(' ')[1].substring(0, 5),
+                    style: const TextStyle(
+                      fontSize: 10.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 5.0),
-            Text(
-              time.split(' ')[1].substring(0, 5),
-              style: const TextStyle(
-                fontSize: 12.0,
-                color: Colors.grey,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
 }
+
 
 class ChatInputField extends StatelessWidget {
   final TextEditingController controller;

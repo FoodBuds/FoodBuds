@@ -190,7 +190,8 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Delete Account'),
-          content: Text('Are you sure you want to delete your account? This action cannot be undone.'),
+          content: Text(
+              'Are you sure you want to delete your account? This action cannot be undone.'),
           actions: <Widget>[
             TextButton(
               child: Text('Cancel'),
@@ -413,17 +414,87 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   final List<String> cities = [
-    'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
-    'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman',
-    'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale',
-    'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne', 'Elazığ',
-    'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane', 'Hakkari',
-    'Hatay', 'Iğdır', 'Isparta', 'Istanbul', 'İzmir', 'Kahramanmaraş', 'Karabük',
-    'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli', 'Kırşehir',
-    'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa', 'Mardin', 'Mersin',
-    'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye', 'Rize', 'Sakarya', 'Samsun',
-    'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak', 'Tekirdağ', 'Tokat', 'Trabzon',
-    'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+    'Adana',
+    'Adıyaman',
+    'Afyonkarahisar',
+    'Ağrı',
+    'Aksaray',
+    'Amasya',
+    'Ankara',
+    'Antalya',
+    'Ardahan',
+    'Artvin',
+    'Aydın',
+    'Balıkesir',
+    'Bartın',
+    'Batman',
+    'Bayburt',
+    'Bilecik',
+    'Bingöl',
+    'Bitlis',
+    'Bolu',
+    'Burdur',
+    'Bursa',
+    'Çanakkale',
+    'Çankırı',
+    'Çorum',
+    'Denizli',
+    'Diyarbakır',
+    'Düzce',
+    'Edirne',
+    'Elazığ',
+    'Erzincan',
+    'Erzurum',
+    'Eskişehir',
+    'Gaziantep',
+    'Giresun',
+    'Gümüşhane',
+    'Hakkari',
+    'Hatay',
+    'Iğdır',
+    'Isparta',
+    'Istanbul',
+    'İzmir',
+    'Kahramanmaraş',
+    'Karabük',
+    'Karaman',
+    'Kars',
+    'Kastamonu',
+    'Kayseri',
+    'Kırıkkale',
+    'Kırklareli',
+    'Kırşehir',
+    'Kilis',
+    'Kocaeli',
+    'Konya',
+    'Kütahya',
+    'Malatya',
+    'Manisa',
+    'Mardin',
+    'Mersin',
+    'Muğla',
+    'Muş',
+    'Nevşehir',
+    'Niğde',
+    'Ordu',
+    'Osmaniye',
+    'Rize',
+    'Sakarya',
+    'Samsun',
+    'Siirt',
+    'Sinop',
+    'Sivas',
+    'Şanlıurfa',
+    'Şırnak',
+    'Tekirdağ',
+    'Tokat',
+    'Trabzon',
+    'Tunceli',
+    'Uşak',
+    'Van',
+    'Yalova',
+    'Yozgat',
+    'Zonguldak'
   ];
 
   void _changeCity() async {
@@ -452,8 +523,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         setState(() {
                           filteredCities = cities
                               .where((city) => city
-                              .toLowerCase()
-                              .contains(value.toLowerCase()))
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
                               .toList();
                         });
                       },
@@ -633,8 +704,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: const Text('Save'),
                   onPressed: selected.isNotEmpty
                       ? () {
-                    Navigator.pop(context, selected);
-                  }
+                          Navigator.pop(context, selected);
+                        }
                       : null,
                 ),
               ],
@@ -705,7 +776,11 @@ class _ProfilePageState extends State<ProfilePage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.amber,
-        title: const Text('Profile', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28)),
+        title: const Text('Profile',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+                fontSize: 28)),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           PopupMenuButton<String>(
@@ -734,38 +809,9 @@ class _ProfilePageState extends State<ProfilePage> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.amber,
               child: Column(
                 children: [
-                  const SizedBox(height: 16),
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: LoadingCircleAvatar(
-                      isLoading: _isImageUploading,
-                      backgroundImage: _profileImage != null
-                          ? FileImage(_profileImage!)
-                          : (filePath.isNotEmpty
-                          ? (filePath.startsWith('http')
-                          ? NetworkImage(filePath)
-                          : FileImage(File(filePath)))
-                          : AssetImage('images/default_profile.png'))
-                      as ImageProvider,
-                      radius: 50,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text('$name', style: TextStyle(color: Colors.white, fontSize: 20)),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: [
+
                   ProfileSection(
                     title: 'Account Settings',
                     isEditable: true,
@@ -813,26 +859,13 @@ class _ProfilePageState extends State<ProfilePage> {
                             side: BorderSide(color: Colors.amber),
                           ),
                         ),
-                    ],
-                  ),
-                  const Divider(thickness: 1),
-                  ProfileSection(
-                    title: 'Plan Settings',
-                    isEditable: true,
-                    onEdit: _editPlanSettings,
-                    children: [
-                      isEditingPlan
-                          ? ProfileEditableField(
-                        label: 'Current Plan',
-                        value: currentPlan,
-                        onChanged: (value) {
-                          setState(() {
-                            currentPlan = value;
-                          });
-                        },
-                      )
-                          : ProfileDisplayField(label: 'Current Plan', value: currentPlan, isEditable: false),
-                    ],
+                        const SizedBox(height: 8),
+                        Text('$name',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 20)),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   ),
                   const Divider(thickness: 1),
                   ProfileSection(
@@ -847,9 +880,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -915,7 +945,7 @@ class ProfileSection extends StatelessWidget {
                 TextButton(
                   onPressed: onEdit,
                   child:
-                  const Text('Edit', style: TextStyle(color: Colors.blue)),
+                      const Text('Edit', style: TextStyle(color: Colors.blue)),
                 ),
             ],
           ),
@@ -986,7 +1016,7 @@ class ProfileEditableField extends StatelessWidget {
         decoration: InputDecoration(
           border: UnderlineInputBorder(),
           focusedBorder:
-          UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+              UnderlineInputBorder(borderSide: BorderSide(color: Colors.black)),
         ),
       ),
     );

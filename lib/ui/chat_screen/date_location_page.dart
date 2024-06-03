@@ -29,6 +29,10 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+            leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.of(context).pop(),
+          ),
         backgroundColor: Colors.white,
         title: Text('Select a Restaurant', style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: 24)),
       ),
@@ -118,6 +122,7 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                   },
                 ),
               ),
+              SizedBox(height: 8),
               if (selectedRestaurant != null) ...[
                 Text(
                   selectedRestaurant!.restaurantName,
@@ -128,30 +133,6 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                   ),
                 ),
                 SizedBox(height: 8),
-                if (selectedRestaurant!.closingHour != null) ...[
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      selectedRestaurant!.closingHour,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.amber,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                ],
               ],
               ElevatedButton(
                 onPressed: () {
@@ -174,12 +155,12 @@ class _RestaurantSelectionPageState extends State<RestaurantSelectionPage> {
                     );
                   }
                 },
-                child: Text('Ask for a date'),
+                child: Text('Select The Restaurant'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   textStyle: TextStyle(
-                    fontSize: 16,
+                    fontSize: 24,
                   ),
                 ),
               ),
